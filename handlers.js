@@ -6,15 +6,26 @@ const handlers = {
     test: function(data, callback){
         callback(200, {"message": "success"})
     },
-    index: function(data, callback){
+    index: function(data){
         // Get category, default to random
         const category = typeof(data.searchParams.category) === 'string' ? data.searchParams.category : 'random';
         // Get paragraphs, default to 5
         const numberOfParagraphs = typeof(data.searchParams.paragraphs) === 'number' && data.searchParams.paragraphs > 0 ? data.searchParams.paragraphs : 5;
 
-        categories.createParagraphs(category, numberOfParagraphs)
-        .then(paragraphs => callback(200, {paragraphs}))
-        .catch(error => callback(404, {"Error": "Category not found"}))
+        return new Promise((resolve, reject) => {
+            categories.createParagraphs(category, numberOfParagraphs)
+            // return paragraphs
+            .then(paragraphs => resolve({
+                statusCode: 200,
+                payload: {paragraphs}
+            }))
+            .catch(error => reject({
+                statusCode: 404,
+                payload: {"Error": "Category not found"}
+            }))
+        })
+
+        
     }
 }
 

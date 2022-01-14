@@ -177,6 +177,7 @@ const categories = {
                             resolve(paragraph)
                         }
                     })
+                    .catch(error => reject(error))
             }
         })
     },
@@ -200,6 +201,7 @@ const categories = {
                             resolve(paragraphs)
                         }
                     })
+                    .catch(error => reject(error))
             }
         })
     }
