@@ -27,7 +27,6 @@ const categories = {
         return fs.readFile(`${categoriesDir}/${category}.json`, 'utf-8')
             .then(content => {
                 const object = JSON.parse(content);
-                // console.log(`Phrases in ${category} category:`, object.phrases);
                 return object.phrases;
             })
             // If error reading file
