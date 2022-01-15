@@ -2,10 +2,12 @@ const http = require("http");
 const { StringDecoder } = require("string_decoder")
 const handlers = require("./handlers")
 const config = require("./config")
+const helpers = require("./helpers")
 
 // TODO move router to a different file
 const router = {
-    '': handlers.index
+    '': handlers.index,
+    test: handlers.test
 }
 
 const server = http.createServer((req, res) => {
@@ -35,10 +37,10 @@ const server = http.createServer((req, res) => {
     req.on("end", () => {
         buffer += decoder.end()
 
-        const payload = JSON.parse(buffer);
+        const payload = helpers.parseJSONToObject(buffer)
 
         // Choose the handler this request should go to. If one is not found, use notFound handler
-        let chosenHandler = typeof (router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound
+        let chosenHandler = typeof (router[trimmedPath]) === 'function' ? router[trimmedPath] : handlers.notFound
 
         // Data to be sent to handler
         const data = {
@@ -82,6 +84,6 @@ const server = http.createServer((req, res) => {
 const PORT = process.env.PORT || 5000
 
 server.listen(PORT, () => {
-    console.log("Server running");
+    console.log(`Server running on port ${PORT}`);
 })
 

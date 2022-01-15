@@ -27,13 +27,26 @@ const helpers = {
         }
     },
     // Create a SHA256 hash
-    hash: function(string){
+    hash: function (string) {
         if (typeof (string) == 'string' && string.length > 0) {
             const hash = crypto.createHmac('sha256', config.hashingSecret).update(string).digest('hex');
             return hash;
         } else {
             return false;
         }
+    },
+    // Parse a JSON string to an object in all cases, without throwing
+    parseJSONToObject: function (string) {
+        try {
+            const object = JSON.parse(string);
+            return object;
+        } catch (exception) {
+            return {};
+        }
+        // return new Promise((resolve, reject) => {
+        //     const object = JSON.parse(string)
+        //     object ? resolve(object) : reject({})
+        // })
     }
 }
 
