@@ -43,10 +43,6 @@ const helpers = {
         } catch (exception) {
             return {};
         }
-        // return new Promise((resolve, reject) => {
-        //     const object = JSON.parse(string)
-        //     object ? resolve(object) : reject({})
-        // })
     }
 }
 

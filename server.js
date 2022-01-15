@@ -6,7 +6,8 @@ const helpers = require("./helpers")
 
 // TODO move router to a different file
 const router = {
-    'api': handlers.api,
+    api: handlers.api,
+    public: handlers.public,
     test: handlers.test
 }
 
@@ -42,6 +43,9 @@ const server = http.createServer((req, res) => {
         // Choose the handler this request should go to. If one is not found, use notFound handler
         let chosenHandler = typeof (router[trimmedPath]) === 'function' ? router[trimmedPath] : handlers.notFound
 
+        // If the request is within the public directory, use the public handler instead
+        chosenHandler = trimmedPath.startsWith('public') ? handlers.public : chosenHandler
+
         // Data to be sent to handler
         const data = {
             trimmedPath,
@@ -52,28 +56,36 @@ const server = http.createServer((req, res) => {
         }
 
         chosenHandler(data)
-        .then(response => {
-            res.statusCode = response.statusCode;
-            res.setHeader('Content-Type', response.contentType);
-            const responsePayload = response.payload
+            .then(response => {
+                const responsePayload = response.payload
 
-            // Convert the payload to a JSON string
-            payloadString = JSON.stringify(responsePayload);
+                let payloadString = '';
 
-            // Return the response
-            res.end(payloadString);
-        })
-        .catch(errorResponse => {
-            res.statusCode = errorResponse.statusCode;
-            res.setHeader('Content-Type', response.contentType);
-            const responsePayload = errorResponse.payload
+                if (response.contentType === 'application/json') {
+                    // Convert the payload to a JSON string
+                    payloadString = JSON.stringify(responsePayload);
+                }
+                else {
+                    payloadString = typeof (responsePayload) !== 'undefined' ? responsePayload : ''
+                }
 
-            // Convert the payload to a JSON string
-            payloadString = JSON.stringify(responsePayload);
+                // Return the response
+                res.statusCode = response.statusCode;
+                res.setHeader('Content-Type', response.contentType);
+                res.end(payloadString);
+            })
+            .catch(errorResponse => {
+                // Error responses only return json
+                const responsePayload = errorResponse.payload
 
-            // Return the response
-            res.end(payloadString);
-        })
+                // Convert the payload to a JSON string
+                payloadString = JSON.stringify(responsePayload);
+
+                // Return the response
+                res.statusCode = errorResponse.statusCode;
+                res.setHeader('Content-Type', errorResponse.contentType);
+                res.end(payloadString);
+            })
     })
 })
 
