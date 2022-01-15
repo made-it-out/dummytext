@@ -6,7 +6,7 @@ const helpers = require("./helpers")
 
 // TODO move router to a different file
 const router = {
-    '': handlers.index,
+    'api': handlers.api,
     test: handlers.test
 }
 
@@ -54,10 +54,8 @@ const server = http.createServer((req, res) => {
         chosenHandler(data)
         .then(response => {
             res.statusCode = response.statusCode;
-            responsePayload = response.payload
-
-            // Set content type to json
-            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Content-Type', response.contentType);
+            const responsePayload = response.payload
 
             // Convert the payload to a JSON string
             payloadString = JSON.stringify(responsePayload);
@@ -67,10 +65,8 @@ const server = http.createServer((req, res) => {
         })
         .catch(errorResponse => {
             res.statusCode = errorResponse.statusCode;
-            responsePayload = errorResponse.payload
-
-            // Set content type to json
-            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Content-Type', response.contentType);
+            const responsePayload = errorResponse.payload
 
             // Convert the payload to a JSON string
             payloadString = JSON.stringify(responsePayload);

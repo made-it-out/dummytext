@@ -6,6 +6,7 @@ const handlers = {
         return new Promise((resolve, reject) => {
             reject({
                 statusCode: 404,
+                contentType: "application/json",
                 payload: {"Error": "Page Not Found"}
             })
         })
@@ -15,6 +16,7 @@ const handlers = {
             if(data.method === 'get'){
                 resolve({
                     statusCode: 200,
+                    contentType: "application/json",
                     payload: {"message": "success"}
                 })
             }
@@ -26,7 +28,7 @@ const handlers = {
             }
         })
     },
-    index: function (data) {
+    api: function (data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
@@ -35,29 +37,42 @@ const handlers = {
                 // Get paragraphs, default to 1
                 const numberOfParagraphs = parseInt(data.searchParams.paragraphs) > 0 ? data.searchParams.paragraphs : 1;
 
-                // console.log(typeof(data.searchParams.paragraphs))
-                // console.log(data.searchParams.paragraphs)
-
                 categories.createParagraphs(category, numberOfParagraphs)
                     // return paragraphs
                     .then(paragraphs => resolve({
                         statusCode: 200,
+                        contentType: "application/json",
                         payload: { paragraphs }
                     }))
                     .catch(error => reject({
                         statusCode: 404,
+                        contentType: "application/json",
                         payload: { "Error": "Category not found" }
                     }))
             }
             else{
                 reject({
                     statusCode: 405,
+                    contentType: "application/json",
                     payload: {"Error": "Request method not allowed"}
                 })
             }
         })
+    },
+    public: function(data){
+        return new Promise((resolve, reject) => {
+            // Only accept GET request
+            if(data.method === 'get'){
 
-
+            }
+            else{
+                reject({
+                    statusCode: 405,
+                    contentType: "application/json",
+                    payload: {"Error": "Request method not allowed"}
+                })
+            }
+        })
     }
 }
 
