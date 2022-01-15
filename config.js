@@ -1,7 +1,13 @@
 const environments = {
     testing: {
-        envName: 'testing',
-        hashingSecret: 'thisIsASecret'
+        name: 'testing',
+        hashingSecret: 'thisIsASecret',
+        base: "http://localhost:5000"
+    },
+    production: {
+        name: 'production',
+        hashingSecret: "thisIsASecret",
+        base: "https://dummytext.herokuapp.com"
     }
 }
 

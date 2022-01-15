@@ -1,18 +1,16 @@
 const http = require("http");
 const { StringDecoder } = require("string_decoder")
-// const url = require("url")
-const base = "http://localhost:5000"
 const handlers = require("./handlers")
+const config = require("./config")
 
 // TODO move router to a different file
 const router = {
-    'test': handlers.test,
     '': handlers.index
 }
 
 const server = http.createServer((req, res) => {
     // Get the requested url
-    const reqUrl = new URL(req.url, base)
+    const reqUrl = new URL(req.url, config.base)
 
     // Get the path without leading or trailing slashes
     const trimmedPath = reqUrl.pathname.replace(/^\/+|\/+$/g, '');
@@ -81,7 +79,9 @@ const server = http.createServer((req, res) => {
     })
 })
 
-server.listen(5000, () => {
+const PORT = process.env.PORT || 5000
+
+server.listen(PORT, () => {
     console.log("Server running");
 })
 

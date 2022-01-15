@@ -2,10 +2,6 @@ const categories = require("./categories")
 
 // Handlers expect a data object and a callback function that returns a status code and a json payload
 const handlers = {
-    // tokens: function(data, callback){}
-    test: function (data, callback) {
-        callback(200, { "message": "success" })
-    },
     index: function (data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
