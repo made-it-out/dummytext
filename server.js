@@ -40,12 +40,6 @@ const server = http.createServer((req, res) => {
 
         const payload = helpers.parseJSONToObject(buffer)
 
-        // Choose the handler this request should go to. If one is not found, use notFound handler
-        let chosenHandler = typeof (router[trimmedPath]) === 'function' ? router[trimmedPath] : handlers.notFound
-
-        // If the request is within the public directory, use the public handler instead
-        chosenHandler = trimmedPath.startsWith('public') ? handlers.public : chosenHandler
-
         // Data to be sent to handler
         const data = {
             trimmedPath,
@@ -55,7 +49,8 @@ const server = http.createServer((req, res) => {
             payload
         }
 
-        chosenHandler(data)
+        // Check for static asset first
+        handlers.public(data)
             .then(response => {
                 const responsePayload = response.payload
 
@@ -74,17 +69,47 @@ const server = http.createServer((req, res) => {
                 res.setHeader('Content-Type', response.contentType);
                 res.end(payloadString);
             })
+            // If the asset is not found, check for other handlers on the router, if the given path is not on the router, use the notFound handler
             .catch(errorResponse => {
-                // Error responses only return json
-                const responsePayload = errorResponse.payload
+                let chosenHandler = typeof (router[trimmedPath]) === 'function' ? router[trimmedPath] : handlers.notFound
 
-                // Convert the payload to a JSON string
-                payloadString = JSON.stringify(responsePayload);
+                chosenHandler(data)
+                    .then(response => {
+                        const responsePayload = response.payload
 
-                // Return the response
-                res.statusCode = errorResponse.statusCode;
-                res.setHeader('Content-Type', errorResponse.contentType);
-                res.end(payloadString);
+                        let payloadString = '';
+
+                        if (response.contentType === 'application/json') {
+                            // Convert the payload to a JSON string
+                            payloadString = JSON.stringify(responsePayload);
+                        }
+                        else {
+                            payloadString = typeof (responsePayload) !== 'undefined' ? responsePayload : ''
+                        }
+
+                        // Return the response
+                        res.statusCode = response.statusCode;
+                        res.setHeader('Content-Type', response.contentType);
+                        res.end(payloadString);
+                    })
+                    .catch(response => {
+                        const responsePayload = response.payload
+
+                        let payloadString = '';
+
+                        if (response.contentType === 'application/json') {
+                            // Convert the payload to a JSON string
+                            payloadString = JSON.stringify(responsePayload);
+                        }
+                        else {
+                            payloadString = typeof (responsePayload) !== 'undefined' ? responsePayload : ''
+                        }
+
+                        // Return the response
+                        res.statusCode = response.statusCode;
+                        res.setHeader('Content-Type', response.contentType);
+                        res.end(payloadString);
+                    })
             })
     })
 })

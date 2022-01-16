@@ -66,29 +66,29 @@ const handlers = {
             // Only accept GET request
             if (data.method === 'get') {
                 // Get the filename being requested
-                const trimmedAssetName = data.trimmedPath.replace('public', '');
+                // const trimmedAssetName = data.trimmedPath.replace('public', '');
                 const publicDir = "./public"
                 let contentType = 'text/plain'
 
-                if (trimmedAssetName.length > 0) {
-                    fs.readFile(`${publicDir}${trimmedAssetName}`, "utf-8")
+                if (data.trimmedPath.length > 0) {
+                    fs.readFile(`${publicDir}/${data.trimmedPath}`, "utf-8")
                         .then(content => {
-                            if (trimmedAssetName.endsWith('.html')) {
+                            if (data.trimmedPath.endsWith('.html')) {
                                 contentType = 'text/html'
                             }
-                            if (trimmedAssetName.endsWith('.css')) {
+                            if (data.trimmedPath.endsWith('.css')) {
                                 contentType = 'text/css'
                             }
-                            if (trimmedAssetName.endsWith('.js')) {
+                            if (data.trimmedPath.endsWith('.js')) {
                                 contentType = 'application/javascript'
                             }
-                            if (trimmedAssetName.endsWith('.png')) {
+                            if (data.trimmedPath.endsWith('.png')) {
                                 contentType = 'image/png'
                             }
-                            if (trimmedAssetName.endsWith('.jpeg')) {
+                            if (data.trimmedPath.endsWith('.jpeg')) {
                                 contentType = 'image/jpeg'
                             }
-                            if (trimmedAssetName.endsWith('.ico')) {
+                            if (data.trimmedPath.endsWith('.ico')) {
                                 contentType = 'image/x-icon'
                             }
 
