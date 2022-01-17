@@ -8,7 +8,8 @@ const helpers = require("./helpers")
 const router = {
     api: handlers.api,
     public: handlers.public,
-    test: handlers.test
+    test: handlers.test,
+    tokens: handlers.tokens
 }
 
 const server = http.createServer((req, res) => {
