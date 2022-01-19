@@ -1,13 +1,19 @@
+require('dotenv').config()
+
 const environments = {
     testing: {
         name: 'testing',
-        hashingSecret: 'thisIsASecret',
-        base: "http://localhost:5000"
+        adminPassword: process.env.ADMIN_PASSWORD,
+        base: "http://localhost:5000",
+        port: 5000,
+        dbUri: process.env.DB_URI
     },
     production: {
         name: 'production',
-        hashingSecret: "thisIsASecret",
-        base: "https://dummytext.herokuapp.com"
+        adminPassword: process.env.ADMIN_PASSWORD,
+        base: "https://dummytext.herokuapp.com",
+        port: process.env.PORT,
+        dbUri: process.env.DB_URI
     }
 }
 

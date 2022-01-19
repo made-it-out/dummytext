@@ -2,6 +2,7 @@ const categories = require("./categories")
 const tokens = require("./tokens")
 const fs = require("fs/promises")
 const helpers = require("./helpers")
+const config = require("./config")
 
 // Handlers expect a data object and returns a promise with a status code and a json payload
 const handlers = {
@@ -26,6 +27,7 @@ const handlers = {
             else {
                 reject({
                     statusCode: 405,
+                    contentType: "application/json",
                     payload: { "Error": "Request method not allowed" }
                 })
             }
@@ -103,7 +105,7 @@ const handlers = {
                         .catch(error => reject({
                             statusCode: 404,
                             contentType: "application/json",
-                            payload: {"Error": "Not Found"}
+                            payload: { "Error": "Not Found" }
                         }))
                 }
                 else {
@@ -132,14 +134,14 @@ const handlers = {
             }
         })
     },
-    tokens: function(data){
+    tokens: function (data) {
         const acceptableMethods = ['post', 'get', 'put', 'delete'];
         // If an accepted method is given, send data to correct handler
-        if(acceptableMethods.includes(data.method)){
+        if (acceptableMethods.includes(data.method)) {
             return handlers._tokens[data.method](data)
         }
-        else{
-            return new Promise((resolve,reject) => reject({
+        else {
+            return new Promise((resolve, reject) => reject({
                 statusCode: 405,
                 contentType: "application/json",
                 payload: { "Error": "Request method not allowed" }
@@ -147,16 +149,12 @@ const handlers = {
         }
     },
     _tokens: {
-        post: function(data){
+        post: function (data) {
             return new Promise((resolve, reject) => {
                 // Get password from request payload
                 const password = typeof (data.payload.password) === 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false
 
-                // Hash the password and check that it matches
-                const hashedPassword = helpers.hash(password)
-
-                // TODO create admin password
-                // if(hashedPassword === ADMIN_PASSWORD){
+                if (password === config.adminPassword) {
                     // If valid, create a new token with a random name.
                     const id = helpers.createRandomString(20);
                     // Set expiration date 1 hour in the future
@@ -168,27 +166,58 @@ const handlers = {
 
                     // Save the token
                     tokens.createToken(token)
-                    .then(resolution => resolve({
-                        statusCode: 201,
+                        .then(resolution => resolve({
+                            statusCode: 201,
+                            contentType: "application/json",
+                            payload: token
+                        }))
+                        .catch(error => reject({
+                            statusCode: 500,
+                            contentType: "application/json",
+                            payload: { "Error": "Could not create token" }
+                        }))
+                }
+                else {
+                    // If password does not match
+                    reject({
+                        statusCode: 401,
                         contentType: "application/json",
-                        payload: token
-                    }))
-                    .catch(error => reject({
-                        statusCode: 500,
-                        contentType: "application/json",
-                        payload: {"Error": "Could not create token"}
-                    }))
-                // }
-                // else{
-                //     // If password does not match
-                //     reject({
-                //         statusCode: 401,
-                //         contentType: "application/json",
-                //         payload: {"Error": "Invalid password"}
-                //     })
-                // }
+                        payload: { "Error": "Invalid password" }
+                    })
+                }
             })
         }
+    },
+    'category-test': function (data) {
+        return new Promise((resolve, reject) => {
+            if (data.method === 'get') {
+                categories.addPhrase("testing", "abcde")
+                .then(result => {
+                    console.log(result)
+                    resolve({
+                        statusCode: 200,
+                        contentType: "application/json",
+                        payload: { "message": "success" }
+                    })
+                })
+                .catch(error => {
+                    console.log(error)
+                    reject({
+                        statusCode: 404,
+                        contentType: "application/json",
+                        payload: {"Error": "Could not find category"}
+                    })
+                })
+                
+            }
+            else {
+                reject({
+                    statusCode: 405,
+                    contentType: "application/json",
+                    payload: { "Error": "Request method not allowed" }
+                })
+            }
+        })
     }
 }
 

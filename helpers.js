@@ -1,6 +1,3 @@
-const crypto = require("crypto");
-const config = require("./config");
-
 const helpers = {
     // Create a string of random alphanumeric characters, of a given length
     createRandomString: function (length) {
@@ -22,15 +19,6 @@ const helpers = {
 
             // Return the final string
             return string;
-        } else {
-            return false;
-        }
-    },
-    // Create a SHA256 hash
-    hash: function (string) {
-        if (typeof (string) == 'string' && string.length > 0) {
-            const hash = crypto.createHmac('sha256', config.hashingSecret).update(string).digest('hex');
-            return hash;
         } else {
             return false;
         }

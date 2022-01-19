@@ -1,5 +1,6 @@
 const http = require("http");
 const { StringDecoder } = require("string_decoder")
+const mongoose = require('mongoose')
 const handlers = require("./handlers")
 const config = require("./config")
 const helpers = require("./helpers")
@@ -9,7 +10,8 @@ const router = {
     api: handlers.api,
     public: handlers.public,
     test: handlers.test,
-    tokens: handlers.tokens
+    tokens: handlers.tokens,
+    'category-test': handlers['category-test']
 }
 
 const server = http.createServer((req, res) => {
@@ -115,9 +117,12 @@ const server = http.createServer((req, res) => {
     })
 })
 
-const PORT = process.env.PORT || 5000
-
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+mongoose.connect(config.dbUri, {useNewUrlParser: true, useUnifiedTopology: true})
+.then(result => {
+    server.listen(config.port, () => {
+        console.log(`Server running on port ${config.port}`);
+    })
 })
+.catch(error => console.log(error))
+
 
