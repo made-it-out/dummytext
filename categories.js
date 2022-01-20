@@ -1,5 +1,4 @@
 const fs = require("fs/promises");
-const categoriesDir = "./data/categories"
 const minPhrases = 2
 const maxPhrases = 6
 const minSentences = 4
@@ -10,8 +9,24 @@ const Category = require('./models/category');
 const categories = {
     // Create a new category
     createCategory: function (category) {
-        return Category.create({ name: category, phrases: [] })
-        // TODO - figure out if then and catch should be done here or in handler function
+        return Category.findOne({ name: category })
+            .then(document => {
+                // If document is found, return
+                if (document) {
+                    return { "Error": `Category \'${category}\' already exists` }
+                }
+                // Else create category
+                return Category.create({ name: category, phrases: [] })
+            })
+            .then(result => {
+                // If the result has _id property, that means a new category was created, so return success message
+                if(result._id){
+                    return {"Success": `Category \'${category}\' created`}
+                }
+                // Otherwise the result would be the error object message from the previous then()
+                return result
+            })
+            .catch(error => error)
     },
     // Read the phrases of a category
     readPhrases: function (category) {
@@ -23,48 +38,63 @@ const categories = {
     addPhrase: function (category, phrase) {
         return Category.findOne({ name: category })
             .then(document => {
-                document.phrases.push(phrase)
-                return document.save()
+                // If document is found, add phrase and save
+                if (document) {
+                    // Check that phrase does not already exist
+                    if(document.phrases.includes(phrase)){
+                        return { "Error": `Phrase \'${phrase}\' already exists` }
+                    }
+                    document.phrases.push(phrase)
+                    return document.save()
+                }
+                // Else return not found
+                return { "Error": `Category \'${category}\' not found` }
+
             })
-            .then(result => { return { "Message": `${phrase} has been added to category ${category}` } })
+            .then(result => {
+                // If document was found, document.save() returns the document
+                if(result.phrases){
+                    return { category, phrases: result.phrases }
+                }
+                // If document was not found, return not found from previous .then()
+                return result
+            })
             .catch(error => error)
     },
     // Delete phrases from a category
     removePhrase: function (category, phrase) {
-        fs.readFile(`${categoriesDir}/${category}.json`, 'utf-8')
-            .then(content => {
-                // Create an object from the file
-                const object = JSON.parse(content)
-
-                // Check if phrase exists
-                if (object.phrases.includes(phrase)) {
-                    // Includes the phrase, remove it
-                    object.phrases = object.phrases.filter(p => p !== phrase)
-
-                    // Create a JSON string with the new object
-                    const string = JSON.stringify(object)
-                    // Write the file with the new string
-                    fs.writeFile(`${categoriesDir}/${category}.json`, string)
-                        // Fulfills with undefined
-                        .then(resolve => console.log(`Successfully removed phrase: \'${phrase}\' from category: \'${category}\'`))
-                        // If error writing file
-                        .catch(error => console.log(error))
+        return Category.findOne({ name: category })
+            .then(document => {
+                // If document is found, remove phrase and save
+                if (document) {
+                    document.phrases = document.phrases.filter(p => p !== phrase)
+                    return document.save()
                 }
-                else {
-                    // Does not include phrase, return
-                    return console.log({ "Error": `Category: \'${category}\' does not contain the phrase \'${phrase}\'` })
-                }
+                // Else return not found
+                return { "Error": `Category ${category} not found` }
             })
-            // If error reading file
-            .catch(error => console.log(error))
+            .then(result => {
+                // If document was found, document.save() returns the document
+                if(result.phrases){
+                    return { category, phrases: result.phrases }
+                }
+                // If document was not found, return not found from previous .then()
+                return result
+            })
+            .catch(error => error)
     },
     // Delete category
     removeCategory: function (category) {
-        fs.unlink(`${categoriesDir}/${category}.json`)
-            // Fulfills with undefined
-            .then(resolve => console.log(`Successfully removed category: \'${category}\'`))
-            // If error deleting category
-            .catch(error => console.log({ "Error": `Could not remove category: \'${category}\', it may not exist` }, error))
+        return Category.deleteOne({name: category})
+        .then(result => {
+            // If a category is actually deleted
+            if(result.deletedCount > 0){
+                return {"Success": `Category \'${category}\' deleted`}
+            }
+            // If no category was found
+            return {"Error": `Category \'${category}\' not found`}
+        })
+        .catch(error => error)
     },
     // Filter phrases to create a sentence
     filterPhrases: function (phrases, numberOfPhrases, sentence) {

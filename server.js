@@ -11,7 +11,7 @@ const router = {
     public: handlers.public,
     test: handlers.test,
     tokens: handlers.tokens,
-    'category-test': handlers['category-test']
+    categories: handlers.categories
 }
 
 const server = http.createServer((req, res) => {
@@ -56,10 +56,12 @@ const server = http.createServer((req, res) => {
         handlers.public(data)
             .then(response => {
                 const responsePayload = response.payload
+                // If content type is specified, use it. Otherwise default to json
+                const contentType = typeof (response.contentType) === 'string' ? response.contentType : "application/json"
 
                 let payloadString = '';
 
-                if (response.contentType === 'application/json') {
+                if (contentType === 'application/json') {
                     // Convert the payload to a JSON string
                     payloadString = JSON.stringify(responsePayload);
                 }
@@ -69,7 +71,7 @@ const server = http.createServer((req, res) => {
 
                 // Return the response
                 res.statusCode = response.statusCode;
-                res.setHeader('Content-Type', response.contentType);
+                res.setHeader('Content-Type', contentType);
                 res.end(payloadString);
             })
             // If the asset is not found, check for other handlers on the router, if the given path is not on the router, use the notFound handler
@@ -79,10 +81,12 @@ const server = http.createServer((req, res) => {
                 chosenHandler(data)
                     .then(response => {
                         const responsePayload = response.payload
+                        // If content type is specified, use it. Otherwise default to json
+                        const contentType = typeof (response.contentType) === 'string' ? response.contentType : "application/json"
 
                         let payloadString = '';
 
-                        if (response.contentType === 'application/json') {
+                        if (contentType === 'application/json') {
                             // Convert the payload to a JSON string
                             payloadString = JSON.stringify(responsePayload);
                         }
@@ -92,15 +96,17 @@ const server = http.createServer((req, res) => {
 
                         // Return the response
                         res.statusCode = response.statusCode;
-                        res.setHeader('Content-Type', response.contentType);
+                        res.setHeader('Content-Type', contentType);
                         res.end(payloadString);
                     })
                     .catch(response => {
                         const responsePayload = response.payload
+                        // If content type is specified, use it. Otherwise default to json
+                        const contentType = typeof (response.contentType) === 'string' ? response.contentType : "application/json"
 
                         let payloadString = '';
 
-                        if (response.contentType === 'application/json') {
+                        if (contentType === 'application/json') {
                             // Convert the payload to a JSON string
                             payloadString = JSON.stringify(responsePayload);
                         }
@@ -110,19 +116,19 @@ const server = http.createServer((req, res) => {
 
                         // Return the response
                         res.statusCode = response.statusCode;
-                        res.setHeader('Content-Type', response.contentType);
+                        res.setHeader('Content-Type', contentType);
                         res.end(payloadString);
                     })
             })
     })
 })
 
-mongoose.connect(config.dbUri, {useNewUrlParser: true, useUnifiedTopology: true})
-.then(result => {
-    server.listen(config.port, () => {
-        console.log(`Server running on port ${config.port}`);
+mongoose.connect(config.dbUri, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(result => {
+        server.listen(config.port, () => {
+            console.log(`Server running on port ${config.port}`);
+        })
     })
-})
-.catch(error => console.log(error))
+    .catch(error => console.log(error))
 
 

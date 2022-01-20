@@ -38,7 +38,7 @@ const handlers = {
             // Only accept GET request
             if (data.method === 'get') {
                 // Get category, default to random
-                const category = typeof (data.searchParams.category) === 'string' ? data.searchParams.category : 'random';
+                const category = data.searchParams.category.trim().length > 0 ? data.searchParams.category.trim() : 'random';
                 // Get paragraphs, default to 1
                 const numberOfParagraphs = parseInt(data.searchParams.paragraphs) > 0 ? data.searchParams.paragraphs : 1;
 
@@ -188,36 +188,153 @@ const handlers = {
             })
         }
     },
-    'category-test': function (data) {
-        return new Promise((resolve, reject) => {
-            if (data.method === 'get') {
-                categories.addPhrase("testing", "abcde")
-                .then(result => {
-                    console.log(result)
-                    resolve({
-                        statusCode: 200,
-                        contentType: "application/json",
-                        payload: { "message": "success" }
-                    })
-                })
-                .catch(error => {
-                    console.log(error)
+    categories: function (data) {
+        const acceptableMethods = ['post', 'get', 'put', 'delete'];
+        // If an accepted method is given, send data to correct handler
+        if (acceptableMethods.includes(data.method)) {
+            return handlers._categories[data.method](data)
+        }
+        else {
+            return new Promise((resolve, reject) => reject({
+                statusCode: 405,
+                contentType: "application/json",
+                payload: { "Error": "Request method not allowed" }
+            }))
+        }
+    },
+    _categories: {
+        put: function (data) {
+            return new Promise((resolve, reject) => {
+                const category = data.payload.category
+                const phrase = data.payload.phrase
+                const method = data.payload.method
+
+                // Check if adding or deleting phrase
+                if (method === "add") {
+                    categories.addPhrase(category, phrase)
+                        .then(result => {
+                            resolve({
+                                statusCode: 200,
+                                contentType: "application/json",
+                                payload: result
+                            })
+                        })
+                        .catch(error => {
+                            reject({
+                                statusCode: 404,
+                                contentType: "application/json",
+                                payload: { "Error": "Could not find category" }
+                            })
+                        })
+                }
+                else if (method === "delete") {
+                    categories.removePhrase(category, phrase)
+                        .then(result => {
+                            resolve({
+                                statusCode: 200,
+                                contentType: "application/json",
+                                payload: result
+                            })
+                        })
+                        .catch(error => {
+                            reject({
+                                statusCode: 404,
+                                contentType: "application/json",
+                                payload: { "Error": "Could not find category" }
+                            })
+                        })
+                }
+                else {
+                    // If no method is given
                     reject({
-                        statusCode: 404,
+                        statusCode: 400,
                         contentType: "application/json",
-                        payload: {"Error": "Could not find category"}
+                        payload: { "Error": "Must include method of \'add\' or \'delete\' in request body" }
                     })
+                }
+            })
+        },
+        get: function(data){
+            return new Promise((resolve, reject) => {
+                const category = data.payload.category;
+
+                categories.readPhrases(category)
+                .then(result => {
+                    // Because the mongoose function for finding a document does not return an error if none is found, check here if the result of readPhrases is an array instead of the null response when a document is not found
+                    if(result instanceof Array){
+                        resolve({
+                            statusCode: 200,
+                            contentType: "application/json",
+                            payload: result
+                        })
+                    }
+                    else{
+                        reject({
+                            statusCode: 404,
+                            contentType: "application/json",
+                            payload: {"Error": `Category \'${category}\' not found`}
+                        })
+                    }
                 })
-                
-            }
-            else {
-                reject({
-                    statusCode: 405,
+                .catch(error => reject({
+                    statusCode: 400,
                     contentType: "application/json",
-                    payload: { "Error": "Request method not allowed" }
+                    payload: error
+                }))
+            })
+        },
+        post: function(data){
+            return new Promise((resolve, reject) => {
+                const category = data.payload.category
+
+                categories.createCategory(category)
+                .then(result => {
+                    // If createCategory returns an Error message (meaning a category already exists), return a 400 status code
+                    if(result["Error"]){
+                        resolve({
+                            statusCode: 400,
+                            payload: result
+                        })
+                    }
+                    else{
+                        resolve({
+                            statusCode: 201,
+                            payload: result
+                        })
+                    }
                 })
-            }
-        })
+                .catch(error => reject({
+                    statusCode: 500,
+                    payload: error
+                }))
+            })
+        },
+        delete: function(data){
+            return new Promise((resolve, reject) => {
+                const category = data.payload.category
+
+                categories.removeCategory(category)
+                .then(result => {
+                    // If removeCategory returns an Error message (meaning a category does not exists), return a 400 status code
+                    if(result["Error"]){
+                        resolve({
+                            statusCode: 400,
+                            payload: result
+                        })
+                    }
+                    else{
+                        resolve({
+                            statusCode: 200,
+                            payload: result
+                        })
+                    }
+                })
+                .catch(error => reject({
+                    statusCode: 500,
+                    payload: error
+                }))
+            })
+        }
     }
 }
 
