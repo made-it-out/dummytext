@@ -10,7 +10,6 @@ const handlers = {
         return new Promise((resolve, reject) => {
             reject({
                 statusCode: 404,
-                contentType: "application/json",
                 payload: { "Error": "Page Not Found" }
             })
         })
@@ -20,14 +19,12 @@ const handlers = {
             if (data.method === 'get') {
                 resolve({
                     statusCode: 200,
-                    contentType: "application/json",
                     payload: { "message": "success" }
                 })
             }
             else {
                 reject({
                     statusCode: 405,
-                    contentType: "application/json",
                     payload: { "Error": "Request method not allowed" }
                 })
             }
@@ -46,19 +43,16 @@ const handlers = {
                     // return paragraphs
                     .then(paragraphs => resolve({
                         statusCode: 200,
-                        contentType: "application/json",
                         payload: { paragraphs }
                     }))
                     .catch(error => reject({
                         statusCode: 404,
-                        contentType: "application/json",
                         payload: { "Error": "Category not found" }
                     }))
             }
             else {
                 reject({
                     statusCode: 405,
-                    contentType: "application/json",
                     payload: { "Error": "Request method not allowed" }
                 })
             }
@@ -128,14 +122,13 @@ const handlers = {
             else {
                 reject({
                     statusCode: 405,
-                    contentType: "application/json",
                     payload: { "Error": "Request method not allowed" }
                 })
             }
         })
     },
     tokens: function (data) {
-        const acceptableMethods = ['post', 'get', 'put', 'delete'];
+        const acceptableMethods = ['post'];
         // If an accepted method is given, send data to correct handler
         if (acceptableMethods.includes(data.method)) {
             return handlers._tokens[data.method](data)
@@ -143,7 +136,6 @@ const handlers = {
         else {
             return new Promise((resolve, reject) => reject({
                 statusCode: 405,
-                contentType: "application/json",
                 payload: { "Error": "Request method not allowed" }
             }))
         }
@@ -166,14 +158,12 @@ const handlers = {
 
                     // Save the token
                     tokens.createToken(token)
-                        .then(resolution => resolve({
+                        .then(result => resolve({
                             statusCode: 201,
-                            contentType: "application/json",
                             payload: token
                         }))
                         .catch(error => reject({
                             statusCode: 500,
-                            contentType: "application/json",
                             payload: { "Error": "Could not create token" }
                         }))
                 }
@@ -181,7 +171,6 @@ const handlers = {
                     // If password does not match
                     reject({
                         statusCode: 401,
-                        contentType: "application/json",
                         payload: { "Error": "Invalid password" }
                     })
                 }
@@ -197,7 +186,6 @@ const handlers = {
         else {
             return new Promise((resolve, reject) => reject({
                 statusCode: 405,
-                contentType: "application/json",
                 payload: { "Error": "Request method not allowed" }
             }))
         }
@@ -215,14 +203,12 @@ const handlers = {
                         .then(result => {
                             resolve({
                                 statusCode: 200,
-                                contentType: "application/json",
                                 payload: result
                             })
                         })
                         .catch(error => {
                             reject({
                                 statusCode: 404,
-                                contentType: "application/json",
                                 payload: { "Error": "Could not find category" }
                             })
                         })
@@ -232,14 +218,12 @@ const handlers = {
                         .then(result => {
                             resolve({
                                 statusCode: 200,
-                                contentType: "application/json",
                                 payload: result
                             })
                         })
                         .catch(error => {
                             reject({
                                 statusCode: 404,
-                                contentType: "application/json",
                                 payload: { "Error": "Could not find category" }
                             })
                         })
@@ -264,21 +248,18 @@ const handlers = {
                     if(result instanceof Array){
                         resolve({
                             statusCode: 200,
-                            contentType: "application/json",
                             payload: result
                         })
                     }
                     else{
                         reject({
                             statusCode: 404,
-                            contentType: "application/json",
                             payload: {"Error": `Category \'${category}\' not found`}
                         })
                     }
                 })
                 .catch(error => reject({
                     statusCode: 400,
-                    contentType: "application/json",
                     payload: error
                 }))
             })
