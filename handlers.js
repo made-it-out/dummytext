@@ -3,6 +3,7 @@ const tokens = require("./tokens")
 const fs = require("fs/promises")
 const helpers = require("./helpers")
 const config = require("./config")
+const { resolve } = require("path")
 
 // Handlers expect a data object and returns a promise with a status code and a json payload
 const handlers = {
@@ -143,6 +144,18 @@ const handlers = {
     _tokens: {
         post: function (data) {
             return new Promise((resolve, reject) => {
+                // Get username from request - should be an empty string
+                const username = typeof(data.payload.username) === 'string' && data.payload.username.trim().length > 0 ? data.payload.username.trim() : false
+
+                if(username){
+                    // Username should not be filled out
+                    reject({
+                        statusCode: 401,
+                        payload: { "Error": "Invalid username or password" }
+                    })
+                    return
+                }
+
                 // Get password from request payload
                 const password = typeof (data.payload.password) === 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false
 
@@ -171,9 +184,35 @@ const handlers = {
                     // If password does not match
                     reject({
                         statusCode: 401,
-                        payload: { "Error": "Invalid password" }
+                        payload: { "Error": "Invalid username or password" }
                     })
                 }
+            })
+        },
+        verifyToken: function(tokenId){
+            return new Promise((resolve, reject) => {
+                tokens.readToken(tokenId)
+                .then(result => {
+                    const object = JSON.parse(result)
+                    // If token is valid
+                    if(object.expires > Date.now()){
+                        resolve(true)
+                    }
+                    // If token is expired
+                    else{
+                        reject({
+                            statusCode: 400,
+                            payload: {"Error": "Missing required token in header"}
+                        })
+                    }
+                })
+                .catch(error => {
+                    // If token is not found
+                    reject({
+                        statusCode: 400,
+                        payload: {"Error": "Missing required token in header"}
+                    })
+                })
             })
         }
     },
@@ -181,7 +220,14 @@ const handlers = {
         const acceptableMethods = ['post', 'get', 'put', 'delete'];
         // If an accepted method is given, send data to correct handler
         if (acceptableMethods.includes(data.method)) {
-            return handlers._categories[data.method](data)
+            const tokenId = data.headers.token
+            
+            // Verify the token sent in the header before continuing
+            return handlers._tokens.verifyToken(tokenId)
+            // If token is verified
+            .then(result => handlers._categories[data.method](data))
+            // If token cannot be verified or error in other handlers
+            .catch(error => error)
         }
         else {
             return new Promise((resolve, reject) => reject({
@@ -232,7 +278,6 @@ const handlers = {
                     // If no method is given
                     reject({
                         statusCode: 400,
-                        contentType: "application/json",
                         payload: { "Error": "Must include method of \'add\' or \'delete\' in request body" }
                     })
                 }
