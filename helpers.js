@@ -1,6 +1,6 @@
 const helpers = {
     // Create a string of random alphanumeric characters, of a given length
-    createRandomString: function (length) {
+    createRandomString(length) {
         length = typeof (length) === 'number' && length > 0 ? length : false;
 
         if (length) {
@@ -24,12 +24,21 @@ const helpers = {
         }
     },
     // Parse a JSON string to an object in all cases, without throwing
-    parseJSONToObject: function (string) {
+    parseJSONToObject(string) {
         try {
             const object = JSON.parse(string);
             return object;
         } catch (exception) {
             return {};
+        }
+    },
+    getSessionToken(request) {
+        // Check if request includes the right cookie
+        if (request.headers.cookie && request.headers.cookie.includes("sessionToken=")) {
+            return request.headers.cookie.split("; ").filter(cookie => cookie.startsWith("sessionToken="))[0].replace("sessionToken=", '')
+        }
+        else{
+            return false
         }
     }
 }

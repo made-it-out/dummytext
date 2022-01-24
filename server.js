@@ -9,9 +9,12 @@ const helpers = require("./helpers")
 const router = {
     api: handlers.api,
     public: handlers.public,
+    '': handlers.index,
+    login: handlers.login,
+    categories: handlers.categories,
     test: handlers.test,
-    tokens: handlers.tokens,
-    categories: handlers.categories
+    'api/tokens': handlers['api/tokens'],
+    'api/categories': handlers['api/categories']
 }
 
 const server = http.createServer((req, res) => {

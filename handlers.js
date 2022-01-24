@@ -3,10 +3,90 @@ const tokens = require("./tokens")
 const fs = require("fs/promises")
 const helpers = require("./helpers")
 const config = require("./config")
-const { resolve } = require("path")
+const pagesDir = './pages'
 
 // Handlers expect a data object and returns a promise with a status code and a json payload
 const handlers = {
+    index: function (data) {
+        return new Promise((resolve, reject) => {
+            // Only accept GET request
+            if (data.method === 'get') {
+                fs.readFile(`${pagesDir}/index.html`, "utf-8")
+                    .then(content => resolve({
+                        statusCode: 200,
+                        contentType: "text/html",
+                        payload: content
+                    }))
+                    .catch(error => reject({
+                        statusCode: 500,
+                        payload: { "Error": "Server error" }
+                    }))
+            }
+            else {
+                reject({
+                    statusCode: 405,
+                    payload: { "Error": "Request method not allowed" }
+                })
+            }
+        })
+    },
+    login: function (data) {
+        return new Promise((resolve, reject) => {
+            // Only accept GET request
+            if (data.method === 'get') {
+                fs.readFile(`${pagesDir}/login.html`, "utf-8")
+                    .then(content => resolve({
+                        statusCode: 200,
+                        contentType: "text/html",
+                        payload: content
+                    }))
+                    .catch(error => reject({
+                        statusCode: 500,
+                        payload: { "Error": "Server error" }
+                    }))
+            }
+            else {
+                reject({
+                    statusCode: 405,
+                    payload: { "Error": "Request method not allowed" }
+                })
+            }
+        })
+    },
+    categories: function (data) {
+        return new Promise((resolve, reject) => {
+            // Only accept GET request
+            if (data.method === 'get') {
+                // Verify token before showing categories
+                const tokenId =  helpers.getSessionToken(data)
+
+                return handlers._tokens.verifyToken(tokenId)
+                    // If token is verified
+                    .then(result => fs.readFile(`${pagesDir}/categories.html`, "utf-8")
+                        .then(content => resolve({
+                            statusCode: 200,
+                            contentType: "text/html",
+                            payload: content
+                        }))
+                        // Nested catch if error reading file
+                        .catch(error => reject({
+                            statusCode: 500,
+                            payload: { "Error": "Server error" }
+                        })))
+                    // If token cannot be verified, serve the login page
+                    .catch(error => {
+                        handlers.login(data).then(result => reject(result));
+                    })
+            }
+            else {
+                reject({
+                    statusCode: 405,
+                    payload: { "Error": "Request method not allowed" }
+                })
+            }
+        })
+    },
+
     notFound: function (data) {
         return new Promise((resolve, reject) => {
             reject({
@@ -72,9 +152,6 @@ const handlers = {
                 if (data.trimmedPath.length > 0) {
                     fs.readFile(`${publicDir}/${data.trimmedPath}`, "utf-8")
                         .then(content => {
-                            if (data.trimmedPath.endsWith('.html')) {
-                                contentType = 'text/html'
-                            }
                             if (data.trimmedPath.endsWith('.css')) {
                                 contentType = 'text/css'
                             }
@@ -99,25 +176,14 @@ const handlers = {
                         })
                         .catch(error => reject({
                             statusCode: 404,
-                            contentType: "application/json",
                             payload: { "Error": "Not Found" }
                         }))
                 }
                 else {
-                    // Serve index.html if path.length is 0
-                    fs.readFile(`${publicDir}/index.html`, "utf-8")
-                        .then(content => {
-                            resolve({
-                                statusCode: 200,
-                                contentType: "text/html",
-                                payload: content
-                            })
-                        })
-                        .catch(error => reject({
-                            statusCode: 404,
-                            contentType: "application/json",
-                            payload: { "Error": "Not Found" }
-                        }))
+                    reject({
+                        statusCode: 404,
+                        payload: { "Error": "Not Found" }
+                    })
                 }
             }
             else {
@@ -128,7 +194,7 @@ const handlers = {
             }
         })
     },
-    tokens: function (data) {
+    'api/tokens': function (data) {
         const acceptableMethods = ['post'];
         // If an accepted method is given, send data to correct handler
         if (acceptableMethods.includes(data.method)) {
@@ -145,9 +211,9 @@ const handlers = {
         post: function (data) {
             return new Promise((resolve, reject) => {
                 // Get username from request - should be an empty string
-                const username = typeof(data.payload.username) === 'string' && data.payload.username.trim().length > 0 ? data.payload.username.trim() : false
+                const username = typeof (data.payload.username) === 'string' && data.payload.username.trim().length > 0 ? data.payload.username.trim() : false
 
-                if(username){
+                if (username) {
                     // Username should not be filled out
                     reject({
                         statusCode: 401,
@@ -189,45 +255,45 @@ const handlers = {
                 }
             })
         },
-        verifyToken: function(tokenId){
+        verifyToken: function (tokenId) {
             return new Promise((resolve, reject) => {
                 tokens.readToken(tokenId)
-                .then(result => {
-                    const object = JSON.parse(result)
-                    // If token is valid
-                    if(object.expires > Date.now()){
-                        resolve(true)
-                    }
-                    // If token is expired
-                    else{
+                    .then(result => {
+                        const object = JSON.parse(result)
+                        // If token is valid
+                        if (object.expires > Date.now()) {
+                            resolve(true)
+                        }
+                        // If token is expired
+                        else {
+                            reject({
+                                statusCode: 400,
+                                payload: { "Error": "Missing required token in header" }
+                            })
+                        }
+                    })
+                    .catch(error => {
+                        // If token is not found
                         reject({
                             statusCode: 400,
-                            payload: {"Error": "Missing required token in header"}
+                            payload: { "Error": "Missing required token in header" }
                         })
-                    }
-                })
-                .catch(error => {
-                    // If token is not found
-                    reject({
-                        statusCode: 400,
-                        payload: {"Error": "Missing required token in header"}
                     })
-                })
             })
         }
     },
-    categories: function (data) {
+    'api/categories': function (data) {
         const acceptableMethods = ['post', 'get', 'put', 'delete'];
         // If an accepted method is given, send data to correct handler
         if (acceptableMethods.includes(data.method)) {
-            const tokenId = data.headers.token
-            
+            const tokenId = helpers.getSessionToken(data)
+
             // Verify the token sent in the header before continuing
             return handlers._tokens.verifyToken(tokenId)
-            // If token is verified
-            .then(result => handlers._categories[data.method](data))
-            // If token cannot be verified or error in other handlers
-            .catch(error => error)
+                // If token is verified
+                .then(result => handlers._categories[data.method](data))
+                // If token cannot be verified or error in other handlers
+                .catch(error => error)
         }
         else {
             return new Promise((resolve, reject) => reject({
@@ -283,82 +349,82 @@ const handlers = {
                 }
             })
         },
-        get: function(data){
+        get: function (data) {
             return new Promise((resolve, reject) => {
                 const category = data.payload.category;
 
                 categories.readPhrases(category)
-                .then(result => {
-                    // Because the mongoose function for finding a document does not return an error if none is found, check here if the result of readPhrases is an array instead of the null response when a document is not found
-                    if(result instanceof Array){
-                        resolve({
-                            statusCode: 200,
-                            payload: result
-                        })
-                    }
-                    else{
-                        reject({
-                            statusCode: 404,
-                            payload: {"Error": `Category \'${category}\' not found`}
-                        })
-                    }
-                })
-                .catch(error => reject({
-                    statusCode: 400,
-                    payload: error
-                }))
+                    .then(result => {
+                        // Because the mongoose function for finding a document does not return an error if none is found, check here if the result of readPhrases is an array instead of the null response when a document is not found
+                        if (result instanceof Array) {
+                            resolve({
+                                statusCode: 200,
+                                payload: result
+                            })
+                        }
+                        else {
+                            reject({
+                                statusCode: 404,
+                                payload: { "Error": `Category \'${category}\' not found` }
+                            })
+                        }
+                    })
+                    .catch(error => reject({
+                        statusCode: 400,
+                        payload: error
+                    }))
             })
         },
-        post: function(data){
+        post: function (data) {
             return new Promise((resolve, reject) => {
                 const category = data.payload.category
 
                 categories.createCategory(category)
-                .then(result => {
-                    // If createCategory returns an Error message (meaning a category already exists), return a 400 status code
-                    if(result["Error"]){
-                        resolve({
-                            statusCode: 400,
-                            payload: result
-                        })
-                    }
-                    else{
-                        resolve({
-                            statusCode: 201,
-                            payload: result
-                        })
-                    }
-                })
-                .catch(error => reject({
-                    statusCode: 500,
-                    payload: error
-                }))
+                    .then(result => {
+                        // If createCategory returns an Error message (meaning a category already exists), return a 400 status code
+                        if (result["Error"]) {
+                            resolve({
+                                statusCode: 400,
+                                payload: result
+                            })
+                        }
+                        else {
+                            resolve({
+                                statusCode: 201,
+                                payload: result
+                            })
+                        }
+                    })
+                    .catch(error => reject({
+                        statusCode: 500,
+                        payload: error
+                    }))
             })
         },
-        delete: function(data){
+        delete: function (data) {
             return new Promise((resolve, reject) => {
                 const category = data.payload.category
 
                 categories.removeCategory(category)
-                .then(result => {
-                    // If removeCategory returns an Error message (meaning a category does not exists), return a 400 status code
-                    if(result["Error"]){
-                        resolve({
-                            statusCode: 400,
-                            payload: result
-                        })
-                    }
-                    else{
-                        resolve({
-                            statusCode: 200,
-                            payload: result
-                        })
-                    }
-                })
-                .catch(error => reject({
-                    statusCode: 500,
-                    payload: error
-                }))
+                    .then(result => {
+                        // If removeCategory returns an Error message (meaning a category does not exists), return a 400 status code
+                        if (result["Error"]) {
+                            resolve({
+                                statusCode: 400,
+                                payload: result
+                            })
+                        }
+                        else {
+                            resolve({
+                                statusCode: 200,
+                                payload: result
+                            })
+                        }
+                    })
+                    .catch(error => reject({
+                        statusCode: 500,
+                        payload: error
+                    }))
             })
         }
     }
