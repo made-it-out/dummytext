@@ -14,7 +14,8 @@ const router = {
     categories: handlers.categories,
     test: handlers.test,
     'api/tokens': handlers['api/tokens'],
-    'api/categories': handlers['api/categories']
+    'api/categories': handlers['api/categories'],
+    'api/categories/all': handlers['api/categories/all']
 }
 
 const server = http.createServer((req, res) => {

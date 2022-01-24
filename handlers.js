@@ -7,7 +7,7 @@ const pagesDir = './pages'
 
 // Handlers expect a data object and returns a promise with a status code and a json payload
 const handlers = {
-    index: function (data) {
+    index(data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
@@ -30,7 +30,7 @@ const handlers = {
             }
         })
     },
-    login: function (data) {
+    login(data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
@@ -53,7 +53,7 @@ const handlers = {
             }
         })
     },
-    categories: function (data) {
+    categories(data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
@@ -87,7 +87,7 @@ const handlers = {
         })
     },
 
-    notFound: function (data) {
+    notFound(data) {
         return new Promise((resolve, reject) => {
             reject({
                 statusCode: 404,
@@ -95,7 +95,7 @@ const handlers = {
             })
         })
     },
-    test: function (data) {
+    test(data) {
         return new Promise((resolve, reject) => {
             if (data.method === 'get') {
                 resolve({
@@ -111,14 +111,14 @@ const handlers = {
             }
         })
     },
-    api: function (data) {
+    api(data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
                 // Get category, default to random
                 const category = data.searchParams.category.trim().length > 0 ? data.searchParams.category.trim() : 'random';
                 // Get paragraphs, default to 1
-                const numberOfParagraphs = parseInt(data.searchParams.paragraphs) > 0 ? data.searchParams.paragraphs : 1;
+                const numberOfParagraphs = parseInt(data.searchParams.paragraphs) > 0 && parseInt(data.searchParams.paragraphs) < 20 ? data.searchParams.paragraphs : 1;
 
                 categories.createParagraphs(category, numberOfParagraphs)
                     // return paragraphs
@@ -140,7 +140,7 @@ const handlers = {
         })
     },
     // Serve file from public directory
-    public: function (data) {
+    public(data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
@@ -194,7 +194,7 @@ const handlers = {
             }
         })
     },
-    'api/tokens': function (data) {
+    'api/tokens'(data) {
         const acceptableMethods = ['post'];
         // If an accepted method is given, send data to correct handler
         if (acceptableMethods.includes(data.method)) {
@@ -208,7 +208,7 @@ const handlers = {
         }
     },
     _tokens: {
-        post: function (data) {
+        post(data) {
             return new Promise((resolve, reject) => {
                 // Get username from request - should be an empty string
                 const username = typeof (data.payload.username) === 'string' && data.payload.username.trim().length > 0 ? data.payload.username.trim() : false
@@ -255,7 +255,7 @@ const handlers = {
                 }
             })
         },
-        verifyToken: function (tokenId) {
+        verifyToken(tokenId) {
             return new Promise((resolve, reject) => {
                 tokens.readToken(tokenId)
                     .then(result => {
@@ -282,7 +282,7 @@ const handlers = {
             })
         }
     },
-    'api/categories': function (data) {
+    'api/categories'(data) {
         const acceptableMethods = ['post', 'get', 'put', 'delete'];
         // If an accepted method is given, send data to correct handler
         if (acceptableMethods.includes(data.method)) {
@@ -303,7 +303,7 @@ const handlers = {
         }
     },
     _categories: {
-        put: function (data) {
+        put(data) {
             return new Promise((resolve, reject) => {
                 const category = data.payload.category
                 const phrase = data.payload.phrase
@@ -349,7 +349,7 @@ const handlers = {
                 }
             })
         },
-        get: function (data) {
+        get(data) {
             return new Promise((resolve, reject) => {
                 const category = data.payload.category;
 
@@ -375,7 +375,7 @@ const handlers = {
                     }))
             })
         },
-        post: function (data) {
+        post(data) {
             return new Promise((resolve, reject) => {
                 const category = data.payload.category
 
@@ -401,7 +401,7 @@ const handlers = {
                     }))
             })
         },
-        delete: function (data) {
+        delete(data) {
             return new Promise((resolve, reject) => {
                 const category = data.payload.category
 
@@ -427,6 +427,29 @@ const handlers = {
                     }))
             })
         }
+    },
+    // Get all the categories to serve to form on homepage
+    'api/categories/all'(data){
+        return new Promise((resolve, reject) => {
+            // Only accept GET request
+            if (data.method === 'get') {
+                categories.getCategories()
+                .then(result => resolve({
+                    statusCode: 200,
+                    payload: result
+                }))
+                .catch(error => reject({
+                    statusCode: 500,
+                    payload: {"Error": "Server error finding categories"}
+                }))
+            }
+            else {
+                reject({
+                    statusCode: 405,
+                    payload: { "Error": "Request method not allowed" }
+                })
+            }
+        })
     }
 }
 

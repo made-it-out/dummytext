@@ -8,7 +8,7 @@ const Category = require('./models/category');
 
 const categories = {
     // Create a new category
-    createCategory: function (category) {
+    createCategory(category) {
         return Category.findOne({ name: category })
             .then(document => {
                 // If document is found, return
@@ -28,14 +28,20 @@ const categories = {
             })
             .catch(error => error)
     },
+    // Get all categories
+    getCategories(){
+        return Category.find({})
+        .then(categories => categories.map(category => category.name))
+        .catch(error => error)
+    },
     // Read the phrases of a category
-    readPhrases: function (category) {
+    readPhrases(category) {
         return Category.findOne({ name: category })
             .then(document => document.phrases)
             .catch(error => error)
     },
     // Add a phrase to a category
-    addPhrase: function (category, phrase) {
+    addPhrase(category, phrase) {
         return Category.findOne({ name: category })
             .then(document => {
                 // If document is found, add phrase and save
@@ -62,7 +68,7 @@ const categories = {
             .catch(error => error)
     },
     // Delete phrases from a category
-    removePhrase: function (category, phrase) {
+    removePhrase(category, phrase) {
         return Category.findOne({ name: category })
             .then(document => {
                 // If document is found, remove phrase and save
@@ -84,7 +90,7 @@ const categories = {
             .catch(error => error)
     },
     // Delete category
-    removeCategory: function (category) {
+    removeCategory(category) {
         return Category.deleteOne({name: category})
         .then(result => {
             // If a category is actually deleted
@@ -97,7 +103,7 @@ const categories = {
         .catch(error => error)
     },
     // Filter phrases to create a sentence
-    filterPhrases: function (phrases, numberOfPhrases, sentence) {
+    filterPhrases(phrases, numberOfPhrases, sentence) {
         let availablePhrases = phrases
 
         // Choose random phrase
@@ -144,7 +150,7 @@ const categories = {
         }
     },
     // Create a sentence
-    createSentence: function (category) {
+    createSentence(category) {
         // Generate number of phrases
         const numberOfPhrases = Math.max(minPhrases, Math.round(Math.random() * maxPhrases));
 
@@ -159,7 +165,7 @@ const categories = {
             .catch(error => error)
     },
     // Create a paragraph
-    createParagraph: function (category) {
+    createParagraph(category) {
         // Generate number of sentences
         const numberOfSentences = Math.max(minSentences, Math.round(Math.random() * maxSentences));
 
@@ -187,7 +193,7 @@ const categories = {
         })
     },
     // Create paragraphs
-    createParagraphs: function (category, numberOfParagraphs) {
+    createParagraphs(category, numberOfParagraphs) {
         // Create empty array for appending paragraphs
         let paragraphs = [];
 
