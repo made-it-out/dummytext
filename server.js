@@ -119,6 +119,7 @@ const server = http.createServer((req, res) => {
                         }
 
                         // Return the response
+                        console.log(response);
                         res.statusCode = response.statusCode;
                         res.setHeader('Content-Type', contentType);
                         res.end(payloadString);

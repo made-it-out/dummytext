@@ -36,9 +36,21 @@ const categories = {
     },
     // Read the phrases of a category
     readPhrases(category) {
-        return Category.findOne({ name: category })
-            .then(document => document.phrases)
+        // If given category is mixed, choose a new category every time readPhrases is called (every sentence)
+        if(category === 'mixed'){
+            return Category.find({})
+            .then(categories => {
+                const randomNumber = Math.floor(Math.random() * categories.length)
+                return categories[randomNumber].phrases
+            })
             .catch(error => error)
+        }
+        else{
+            return Category.findOne({ name: category })
+            .then(category => category.phrases)
+            .catch(error => error)
+        }
+        
     },
     // Add a phrase to a category
     addPhrase(category, phrase) {
@@ -183,7 +195,7 @@ const categories = {
                         // Push sentence to paragraph
                         paragraph.push(sentence)
 
-                        if (i === numberOfSentences - 1) {
+                        if (paragraph.length === numberOfSentences) {
                             // Return the array  of sentences
                             resolve(paragraph)
                         }
@@ -207,7 +219,7 @@ const categories = {
 
                         paragraphs.push(paragraph)
 
-                        if (i === numberOfParagraphs - 1) {
+                        if (paragraphs.length === numberOfParagraphs) {
                             // Return the array  of paragraphs
                             resolve(paragraphs)
                         }

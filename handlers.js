@@ -58,7 +58,7 @@ const handlers = {
             // Only accept GET request
             if (data.method === 'get') {
                 // Verify token before showing categories
-                const tokenId =  helpers.getSessionToken(data)
+                const tokenId = helpers.getSessionToken(data)
 
                 return handlers._tokens.verifyToken(tokenId)
                     // If token is verified
@@ -115,10 +115,10 @@ const handlers = {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
-                // Get category, default to random
-                const category = data.searchParams.category.trim().length > 0 ? data.searchParams.category.trim() : 'random';
+                // Get category, default to mixed
+                const category = typeof (data.searchParams.category) === 'string' && data.searchParams.category.trim().length > 0 ? data.searchParams.category.trim() : 'mixed';
                 // Get paragraphs, default to 1
-                const numberOfParagraphs = parseInt(data.searchParams.paragraphs) > 0 && parseInt(data.searchParams.paragraphs) < 20 ? data.searchParams.paragraphs : 1;
+                const numberOfParagraphs = typeof (data.searchParams.paragraphs) === 'string' && parseInt(data.searchParams.paragraphs) > 0 && parseInt(data.searchParams.paragraphs) < 20 ? data.searchParams.paragraphs : 1;
 
                 categories.createParagraphs(category, numberOfParagraphs)
                     // return paragraphs
@@ -129,7 +129,8 @@ const handlers = {
                     .catch(error => reject({
                         statusCode: 404,
                         payload: { "Error": "Category not found" }
-                    }))
+                    })
+                    )
             }
             else {
                 reject({
@@ -429,19 +430,19 @@ const handlers = {
         }
     },
     // Get all the categories to serve to form on homepage
-    'api/categories/all'(data){
+    'api/categories/all'(data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
                 categories.getCategories()
-                .then(result => resolve({
-                    statusCode: 200,
-                    payload: result
-                }))
-                .catch(error => reject({
-                    statusCode: 500,
-                    payload: {"Error": "Server error finding categories"}
-                }))
+                    .then(result => resolve({
+                        statusCode: 200,
+                        payload: result
+                    }))
+                    .catch(error => reject({
+                        statusCode: 500,
+                        payload: { "Error": "Server error finding categories" }
+                    }))
             }
             else {
                 reject({
