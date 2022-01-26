@@ -9,8 +9,22 @@
     <script src="/index.js" defer></script>
 </head>
 <body>
-    <form id="generateText">
-        <select name="categories-list" id="categories-list"></select>
+    <header class="header">
+        <a href="/" class="logo">Dummy Text</a>
+    </header>
+
+    <form id="generate-text">
+        <label for="categories-list">Category</label>
+        <select name="categories-list" id="categories-list">
+            <option value="mixed">mixed</option>
+        </select>
+
+        <label for="paragraphs-number">Paragraphs</label>
+        <input type="number" name="paragraphs-number" id="paragraphs-number">
+
+        <button type="submit">Generate</button>
     </form>
+
+    <div id="output"></div>
 </body>
 </html>

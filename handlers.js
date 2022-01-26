@@ -118,7 +118,7 @@ const handlers = {
                 // Get category, default to mixed
                 const category = typeof (data.searchParams.category) === 'string' && data.searchParams.category.trim().length > 0 ? data.searchParams.category.trim() : 'mixed';
                 // Get paragraphs, default to 1
-                const numberOfParagraphs = typeof (data.searchParams.paragraphs) === 'string' && parseInt(data.searchParams.paragraphs) > 0 && parseInt(data.searchParams.paragraphs) < 20 ? data.searchParams.paragraphs : 1;
+                const numberOfParagraphs = typeof (data.searchParams.paragraphs) === 'string' && parseInt(data.searchParams.paragraphs) > 0 && parseInt(data.searchParams.paragraphs) <= 20 ? parseInt(data.searchParams.paragraphs) : 1;
 
                 categories.createParagraphs(category, numberOfParagraphs)
                     // return paragraphs
@@ -268,16 +268,16 @@ const handlers = {
                         // If token is expired
                         else {
                             reject({
-                                statusCode: 400,
-                                payload: { "Error": "Missing required token in header" }
+                                statusCode: 401,
+                                payload: { "Error": "Unauthorized" }
                             })
                         }
                     })
                     .catch(error => {
                         // If token is not found
                         reject({
-                            statusCode: 400,
-                            payload: { "Error": "Missing required token in header" }
+                            statusCode: 401,
+                            payload: { "Error": "Unauthorized" }
                         })
                     })
             })
