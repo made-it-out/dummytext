@@ -526,9 +526,12 @@ Button
   font-size: var(--font-4);
   transition: color 200ms ease-in-out, background-color 200ms ease-in-out;
 }
-.button:hover, .button:focus {
+.button:hover {
   color: var(--color-gray-8);
   background-color: transparent;
+}
+.button:focus {
+  outline: 5px solid var(--color-gray-4);
 }
 
 /*

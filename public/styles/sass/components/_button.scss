@@ -17,8 +17,11 @@ Button
     font-size: var(--font-4);
     transition: color 200ms ease-in-out, background-color 200ms ease-in-out;
 
-    &:hover, &:focus{
+    &:hover{
         color: var(--color-gray-8);
         background-color: transparent;
+    }
+    &:focus{
+        outline: 5px solid var(--color-gray-4);
     }
 }

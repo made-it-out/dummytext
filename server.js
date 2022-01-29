@@ -76,6 +76,7 @@ const server = http.createServer((req, res) => {
                 // Return the response
                 res.statusCode = response.statusCode;
                 res.setHeader('Content-Type', contentType);
+                res.setHeader('Access-Control-Allow-Origin', "*");
                 res.end(payloadString);
             })
             // If the asset is not found, check for other handlers on the router, if the given path is not on the router, use the notFound handler
@@ -101,6 +102,7 @@ const server = http.createServer((req, res) => {
                         // Return the response
                         res.statusCode = response.statusCode;
                         res.setHeader('Content-Type', contentType);
+                        res.setHeader('Access-Control-Allow-Origin', "*");
                         res.end(payloadString);
                     })
                     .catch(response => {
@@ -121,6 +123,7 @@ const server = http.createServer((req, res) => {
                         // Return the response
                         res.statusCode = response.statusCode;
                         res.setHeader('Content-Type', contentType);
+                        res.setHeader('Access-Control-Allow-Origin', "*");
                         res.end(payloadString);
                     })
             })
