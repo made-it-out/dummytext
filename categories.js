@@ -1,5 +1,5 @@
 const fs = require("fs/promises");
-const minPhrases = 2
+const minPhrases = 4
 const maxPhrases = 6
 const minSentences = 4
 const maxSentences = 7
@@ -21,7 +21,7 @@ const categories = {
             .then(result => {
                 // If the result has _id property, that means a new category was created, so return success message
                 if(result._id){
-                    return {"Success": `Category \'${category}\' created`}
+                    return {"message": `Category \'${category}\' created`}
                 }
                 // Otherwise the result would be the error object message from the previous then()
                 return result
@@ -107,7 +107,7 @@ const categories = {
         .then(result => {
             // If a category is actually deleted
             if(result.deletedCount > 0){
-                return {"Success": `Category \'${category}\' deleted`}
+                return {"message": `Category \'${category}\' deleted`}
             }
             // If no category was found
             return {"Error": `Category \'${category}\' not found`}

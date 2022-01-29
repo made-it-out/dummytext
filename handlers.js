@@ -352,7 +352,8 @@ const handlers = {
         },
         get(data) {
             return new Promise((resolve, reject) => {
-                const category = data.payload.category;
+                // Get category, default to mixed
+                const category = typeof (data.searchParams.category) === 'string' && data.searchParams.category.trim().length > 0 ? data.searchParams.category.trim() : 'mixed';
 
                 categories.readPhrases(category)
                     .then(result => {

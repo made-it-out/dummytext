@@ -53,6 +53,8 @@ function init() {
 
             output.appendChild(element)
         })
+
+        window.scrollTo(0,0)
     }
 
     getCategories()
