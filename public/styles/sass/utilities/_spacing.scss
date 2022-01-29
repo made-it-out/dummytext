@@ -1,0 +1,17 @@
+@use '../abstracts/' as a;
+
+/*
+=================
+Spacing utilities
+=================
+*/
+
+.section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+
+    @include a.mq-min(768px) {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+}

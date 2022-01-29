@@ -1,0 +1,167 @@
+/*
+===================
+Animation utilities
+===================
+*/
+
+/* Delays */
+.delay-1{
+    animation-delay: 100ms;
+}
+
+.delay-2{
+    animation-delay: 200ms;
+}
+
+.delay-3{
+    animation-delay: 300ms;
+}
+
+.delay-4{
+    animation-delay: 400ms;
+}
+
+.delay-5{
+    animation-delay: 500ms;
+}
+
+.delay-6{
+    animation-delay: 600ms;
+}
+
+.delay-7{
+    animation-delay: 700ms;
+}
+
+.delay-8{
+    animation-delay: 800ms;
+}
+
+.delay-9{
+    animation-delay: 900ms;
+}
+
+.delay-10{
+    animation-delay: 1000ms;
+}
+
+.delay-11{
+    animation-delay: 1100ms;
+}
+
+.delay-12{
+    animation-delay: 1200ms;
+}
+
+.delay-13{
+    animation-delay: 1300ms;
+}
+
+.delay-14{
+    animation-delay: 1400ms;
+}
+
+.delay-15{
+    animation-delay: 1500ms;
+}
+
+.delay-16{
+    animation-delay: 1600ms;
+}
+
+.delay-17{
+    animation-delay: 1700ms;
+}
+
+.delay-18{
+    animation-delay: 1800ms;
+}
+
+.delay-19{
+    animation-delay: 1900ms;
+}
+
+.delay-20{
+    animation-delay: 2000ms;
+}
+
+/* Timing */
+.ease{
+    animation-timing-function: ease;
+}
+.ease-in{
+    animation-timing-function: ease-in;
+}
+.ease-out{
+    animation-timing-function: ease-out;
+}
+.ease-in-out{
+    animation-timing-function: ease-in-out;
+}
+
+/* Fade in + transform none */
+@keyframes fade-in-no-transform {
+    100%{
+        opacity: 1;
+        transform: none;
+    }
+}
+.fade-in-translate-down{
+    opacity: 0;
+    transform: translateY(-2rem);
+    &.animate{
+        animation-name: fade-in-no-transform;
+        animation-duration: 500ms;
+        animation-fill-mode: forwards;
+    }
+}
+.fade-in-translate-up{
+    opacity: 0;
+    transform: translateY(2rem);
+    &.animate{
+        animation-name: fade-in-no-transform;
+        animation-duration: 500ms;
+        animation-fill-mode: forwards;
+    }
+}
+.fade-in-translate-left{
+    opacity: 0;
+    transform: translateX(2rem);
+    &.animate{
+        animation-name: fade-in-no-transform;
+        animation-duration: 500ms;
+        animation-fill-mode: forwards;
+    }
+}
+.fade-in-translate-right{
+    opacity: 0;
+    transform: translateX(-2rem);
+    &.animate{
+        animation-name: fade-in-no-transform;
+        animation-duration: 500ms;
+        animation-fill-mode: forwards;
+    }
+}
+.fade-in-translate-right-rotate-right{
+    opacity: 0;
+    transform: translateX(-2rem) rotate(-360deg);
+    &.animate{
+        animation-name: fade-in-no-transform;
+        animation-duration: 1000ms;
+        animation-fill-mode: forwards;
+    }
+}
+
+@keyframes fade-in {
+    100%{
+        opacity: 1;
+    }
+}
+.fade-in{
+    opacity: 0;
+    &.animate{
+        animation-name: fade-in;
+        animation-duration: 500ms;
+        animation-fill-mode: forwards;
+    }
+}

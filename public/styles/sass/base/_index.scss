@@ -1,0 +1,43 @@
+@forward './reset';
+@forward './colors';
+@forward './typography';
+
+
+:root {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--color-gray-2);
+    font-size: var(--font-4);
+    font-family: var(--font-sans);
+    width: 100%;
+
+    &.body {
+
+        &--modal-shown,
+        &--navbar-shown {
+            overflow-y: hidden;
+        }
+    }
+}
+
+.skip-to-main{
+    width: 1px;
+    height: 1px;
+    font-size: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+
+    &:focus{
+        width: auto;
+        height: auto;
+        font-size: var(--font-5);
+        padding: 1rem;
+        color: var(--color-black);
+        background-color: var(--color-white);
+        z-index: 999;
+    }
+}

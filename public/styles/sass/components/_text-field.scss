@@ -1,0 +1,39 @@
+/*
+==========
+Text Field
+==========
+*/
+
+.text-field{
+    position: relative;
+
+    &__label{
+        position: absolute;
+        top: .75rem;
+        left: 1rem;
+        font-size: var(--font-4);
+        transition: all 200ms ease-in-out;
+        cursor: text;
+        &--up{
+            top: .2rem;
+            left: 1rem;
+            font-size: .6rem;
+            letter-spacing: .1rem;
+        }
+    }
+    &__input{
+        width: 100%;
+        padding: 1rem 1rem .5rem 1rem;
+        font-size: var(--font-4);
+        outline: none;
+        border: 1px solid var(--color-black);
+        border-radius: 4px;
+        background-color: transparent;
+        &:focus{
+            border-color: var(--color-primary);
+        }
+    }
+    &__textarea{
+        height: 200px;
+    }
+}

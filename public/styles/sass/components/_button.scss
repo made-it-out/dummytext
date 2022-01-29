@@ -1,0 +1,24 @@
+@use '../abstracts/' as a;
+/*
+======
+Button
+======
+*/
+
+.button{
+    display: block;
+    width: fit-content;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border: 1px solid var(--color-gray-8);
+    background-color: var(--color-gray-8);
+    color: var(--color-white);
+    cursor: pointer;
+    font-size: var(--font-4);
+    transition: color 200ms ease-in-out, background-color 200ms ease-in-out;
+
+    &:hover, &:focus{
+        color: var(--color-gray-8);
+        background-color: transparent;
+    }
+}

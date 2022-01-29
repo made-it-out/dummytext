@@ -1,0 +1,16 @@
+@use '../abstracts/'as a;
+
+.output:not(:empty) {
+    padding: 1rem;
+    background-color: var(--color-white);
+    border-radius: 5px;
+    margin-top: 2rem;
+
+    @include a.mq-min(768px) {
+        margin-top: 4rem;
+    }
+
+    p {
+        margin-bottom: 1rem;
+    }
+}
