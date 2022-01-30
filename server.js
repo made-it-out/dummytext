@@ -12,6 +12,7 @@ const router = {
     '': handlers.index,
     login: handlers.login,
     categories: handlers.categories,
+    docs: handlers.docs,
     test: handlers.test,
     'api/tokens': handlers['api/tokens'],
     'api/categories': handlers['api/categories'],

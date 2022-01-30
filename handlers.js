@@ -86,7 +86,29 @@ const handlers = {
             }
         })
     },
-
+    docs(data){
+        return new Promise((resolve, reject) => {
+            // Only accept GET request
+            if (data.method === 'get') {
+                fs.readFile(`${pagesDir}/docs.html`, "utf-8")
+                    .then(content => resolve({
+                        statusCode: 200,
+                        contentType: "text/html",
+                        payload: content
+                    }))
+                    .catch(error => reject({
+                        statusCode: 500,
+                        payload: { "Error": "Server error" }
+                    }))
+            }
+            else {
+                reject({
+                    statusCode: 405,
+                    payload: { "Error": "Request method not allowed" }
+                })
+            }
+        })
+    },
     notFound(data) {
         return new Promise((resolve, reject) => {
             reject({

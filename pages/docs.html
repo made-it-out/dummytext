@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Generate filler text from a wide range of categories.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap-grid.min.css"
+        integrity="sha512-3AxW5HcDzhL9MJdO2mpDEGEZ6NcCg/pDSa8R2kH5gwEA4r48RxZf0nPITA1NfX1pNA6a/eAayX+yW6QopF4jeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Dummy Text Generator</title>
+    <link rel="stylesheet" href="/styles/css/main.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header__container container">
+            <a href="/" class="header__logo">Dummy Text</a>
+
+            <button class="header__toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+    </header>
+
+    <div class="container section docs">
+        <h1>API Documentation</h1>
+
+        <p>The Dummy Text API has 1 resource.</p>
+        <p class="endpoint">https://dummytext.co/api</p>
+
+        <h2>Parameters</h2>
+
+        <p>There are two optional parameters that you can include with your requests:</p>
+
+        <ul>
+            <li><code>category</code> - The category of dummy text to be generated. Defaults to 'mixed' which uses a
+                potentially different category for each sentence in a paragraph.</li>
+
+            <li><code>paragraphs</code> - The number of paragraphs between 1 and 20. Defaults to 1.</li>
+        </ul>
+
+        <h2>An example request:</h2>
+
+<pre id="request">
+<span class="function">fetch</span><span class="punctuation">(</span><span class="string">'https://dummytext.co/api?category=tiktok&amp;paragraphs=3'</span><span class="punctuation">)</span>
+    <span class="punctuation">.</span><span class="function">then</span><span class="punctuation">(</span><span class="parameter">response</span><span class="operator"> => </span><span class="parameter">response</span><span class="punctuation">.</span><span class="function">json</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span>
+    <span class="punctuation">.</span><span class="function">then</span><span class="punctuation">(</span><span class="parameter">data</span><span class="operator"> => </span><span class="parameter">console</span><span class="punctuation">.</span><span class="function">log</span><span class="punctuation">(</span><span class="parameter">data</span><span class="punctuation">)</span><span class="punctuation">)</span>
+</pre>
+
+        <p>And the response:</p>
+
+<pre id="response">
+<span class="punctuation">{</span>
+    <span class="parameter">paragraphs</span><span class="operator">:</span>
+    <span class="punctuation">[</span>
+        </span><span class="string">"Ayo pushin P bing bong oh no our table. It's giving, wassup baby bing bong caught a vibe. Ayo wassup baby bing bong, you being weird to me must be nice. Bing bong oh no our table must be nice see these dogs. Spoon in my face I'm tryna get like you, must be nice, oh no our table."</span><span class="punctuation">,</span>
+        <span class="string">"You being weird to me bing bong spoon in my face see these dogs. Must be nice it's giving caught a vibe ayo. Bing bong ayo you being weird to me I'm tryna get like you. It's giving caught a vibe oh no our table ayo. Oh no our table, pushin P caught a vibe, you being weird to me."</span><span class="punctuation">,</span>
+        <span class="string">"Pushin P bing bong see these dogs spoon in my face. It's giving I'm tryna get like you spoon in my face, wassup baby. Ayo caught a vibe must be nice see these dogs wassup baby. I'm tryna get like you must be nice, spoon in my face wassup baby it's giving. Spoon in my face oh no our table pushin P wassup baby. Wassup baby see these dogs ayo it's giving you being weird to me bing bong."</span>
+    <span class="punctuation">]</span>
+<span class="punctuation">}</span>
+</pre>
+    </div>
+
+
+</body>
+
+</html>

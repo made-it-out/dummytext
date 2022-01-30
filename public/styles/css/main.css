@@ -69,7 +69,9 @@ Colors
   --color-gray-6: #444444;
   --color-gray-7: #272727;
   --color-gray-8: #1b1b1b;
-  --color-primary: #3d2719;
+  --color-orange: #df7e23;
+  --color-yellow: #faf16d;
+  --color-blue: #4bb3f0;
 }
 
 /*
@@ -604,4 +606,56 @@ Text Field
 }
 .output:not(:empty) p {
   margin-bottom: 1rem;
+}
+
+.docs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.docs h1 {
+  font-size: var(--font-8);
+  font-weight: 700;
+}
+.docs h2 {
+  font-size: var(--font-7);
+  font-weight: 600;
+}
+.docs ul {
+  list-style: none;
+  line-height: 1.5;
+}
+.docs li {
+  margin-bottom: 1rem;
+}
+
+pre {
+  background-color: var(--color-gray-8);
+  padding: 1rem;
+  border-radius: 5px;
+  margin: 2rem 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+code {
+  padding: 0.2rem;
+  background-color: var(--color-gray-8);
+  color: var(--color-white);
+}
+
+.function {
+  color: var(--color-yellow);
+}
+
+.string {
+  color: var(--color-orange);
+}
+
+.parameter {
+  color: var(--color-blue);
+}
+
+.punctuation, .operator {
+  color: var(--color-gray-2);
 }
