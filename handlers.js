@@ -19,13 +19,13 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 500,
-                        payload: { "Error": "Server error" }
+                        payload: { error: "Server error" }
                     }))
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { "Error": "Request method not allowed" }
+                    payload: { error: "Request method not allowed" }
                 })
             }
         })
@@ -42,13 +42,13 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 500,
-                        payload: { "Error": "Server error" }
+                        payload: { error: "Server error" }
                     }))
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { "Error": "Request method not allowed" }
+                    payload: { error: "Request method not allowed" }
                 })
             }
         })
@@ -71,7 +71,7 @@ const handlers = {
                         // Nested catch if error reading file
                         .catch(error => reject({
                             statusCode: 500,
-                            payload: { "Error": "Server error" }
+                            payload: { error: "Server error" }
                         })))
                     // If token cannot be verified, serve the login page
                     .catch(error => {
@@ -81,12 +81,12 @@ const handlers = {
             else {
                 reject({
                     statusCode: 405,
-                    payload: { "Error": "Request method not allowed" }
+                    payload: { error: "Request method not allowed" }
                 })
             }
         })
     },
-    docs(data){
+    docs(data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
@@ -98,13 +98,13 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 500,
-                        payload: { "Error": "Server error" }
+                        payload: { error: "Server error" }
                     }))
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { "Error": "Request method not allowed" }
+                    payload: { error: "Request method not allowed" }
                 })
             }
         })
@@ -113,24 +113,8 @@ const handlers = {
         return new Promise((resolve, reject) => {
             reject({
                 statusCode: 404,
-                payload: { "Error": "Page Not Found" }
+                payload: { error: "Page Not Found" }
             })
-        })
-    },
-    test(data) {
-        return new Promise((resolve, reject) => {
-            if (data.method === 'get') {
-                resolve({
-                    statusCode: 200,
-                    payload: { "message": "success" }
-                })
-            }
-            else {
-                reject({
-                    statusCode: 405,
-                    payload: { "Error": "Request method not allowed" }
-                })
-            }
         })
     },
     api(data) {
@@ -150,14 +134,14 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 404,
-                        payload: { "Error": "Category not found" }
+                        payload: { error: "Category not found" }
                     })
                     )
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { "Error": "Request method not allowed" }
+                    payload: { error: "Request method not allowed" }
                 })
             }
         })
@@ -199,20 +183,20 @@ const handlers = {
                         })
                         .catch(error => reject({
                             statusCode: 404,
-                            payload: { "Error": "Not Found" }
+                            payload: { error: "Not Found" }
                         }))
                 }
                 else {
                     reject({
                         statusCode: 404,
-                        payload: { "Error": "Not Found" }
+                        payload: { error: "Not Found" }
                     })
                 }
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { "Error": "Request method not allowed" }
+                    payload: { error: "Request method not allowed" }
                 })
             }
         })
@@ -226,7 +210,7 @@ const handlers = {
         else {
             return new Promise((resolve, reject) => reject({
                 statusCode: 405,
-                payload: { "Error": "Request method not allowed" }
+                payload: { error: "Request method not allowed" }
             }))
         }
     },
@@ -240,7 +224,7 @@ const handlers = {
                     // Username should not be filled out
                     reject({
                         statusCode: 401,
-                        payload: { "Error": "Invalid username or password" }
+                        payload: { error: "Invalid username or password" }
                     })
                     return
                 }
@@ -266,14 +250,14 @@ const handlers = {
                         }))
                         .catch(error => reject({
                             statusCode: 500,
-                            payload: { "Error": "Could not create token" }
+                            payload: { error: "Could not create token" }
                         }))
                 }
                 else {
                     // If password does not match
                     reject({
                         statusCode: 401,
-                        payload: { "Error": "Invalid username or password" }
+                        payload: { error: "Invalid username or password" }
                     })
                 }
             })
@@ -282,24 +266,24 @@ const handlers = {
             return new Promise((resolve, reject) => {
                 tokens.readToken(tokenId)
                     .then(result => {
-                        const object = JSON.parse(result)
                         // If token is valid
-                        if (object.expires > Date.now()) {
+                        if (result.expires > Date.now()) {
                             resolve(true)
                         }
                         // If token is expired
                         else {
                             reject({
                                 statusCode: 401,
-                                payload: { "Error": "Unauthorized" }
+                                payload: { error: "Unauthorized" }
                             })
                         }
                     })
                     .catch(error => {
+                        console.log(error);
                         // If token is not found
                         reject({
                             statusCode: 401,
-                            payload: { "Error": "Unauthorized" }
+                            payload: { error: "Unauthorized" }
                         })
                     })
             })
@@ -321,7 +305,7 @@ const handlers = {
         else {
             return new Promise((resolve, reject) => reject({
                 statusCode: 405,
-                payload: { "Error": "Request method not allowed" }
+                payload: { error: "Request method not allowed" }
             }))
         }
     },
@@ -344,7 +328,7 @@ const handlers = {
                         .catch(error => {
                             reject({
                                 statusCode: 404,
-                                payload: { "Error": "Could not find category" }
+                                payload: { error: "Could not find category" }
                             })
                         })
                 }
@@ -359,7 +343,7 @@ const handlers = {
                         .catch(error => {
                             reject({
                                 statusCode: 404,
-                                payload: { "Error": "Could not find category" }
+                                payload: { error: "Could not find category" }
                             })
                         })
                 }
@@ -367,7 +351,7 @@ const handlers = {
                     // If no method is given
                     reject({
                         statusCode: 400,
-                        payload: { "Error": "Must include method of \'add\' or \'delete\' in request body" }
+                        payload: { error: "Must include method of \'add\' or \'delete\' in request body" }
                     })
                 }
             })
@@ -389,7 +373,7 @@ const handlers = {
                         else {
                             reject({
                                 statusCode: 404,
-                                payload: { "Error": `Category \'${category}\' not found` }
+                                payload: { error: `Category \'${category}\' not found` }
                             })
                         }
                     })
@@ -406,7 +390,7 @@ const handlers = {
                 categories.createCategory(category)
                     .then(result => {
                         // If createCategory returns an Error message (meaning a category already exists), return a 400 status code
-                        if (result["Error"]) {
+                        if (result[error]) {
                             resolve({
                                 statusCode: 400,
                                 payload: result
@@ -432,7 +416,7 @@ const handlers = {
                 categories.removeCategory(category)
                     .then(result => {
                         // If removeCategory returns an Error message (meaning a category does not exists), return a 400 status code
-                        if (result["Error"]) {
+                        if (result[error]) {
                             resolve({
                                 statusCode: 400,
                                 payload: result
@@ -464,13 +448,13 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 500,
-                        payload: { "Error": "Server error finding categories" }
+                        payload: { error: "Server error finding categories" }
                     }))
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { "Error": "Request method not allowed" }
+                    payload: { error: "Request method not allowed" }
                 })
             }
         })

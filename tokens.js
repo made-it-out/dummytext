@@ -1,12 +1,11 @@
-const fs = require("fs/promises");
-const tokensDir = "./data/tokens"
+const Token = require('./models/token')
 
 const tokens = {
     createToken(token){
-        return fs.writeFile(`${tokensDir}/${token.id}.json`, JSON.stringify(token), 'utf-8')
+        return Token.create(token)
     },
     readToken(tokenId){
-        return fs.readFile(`${tokensDir}/${tokenId}.json`, 'utf-8')
+        return Token.findOne({id: tokenId})
     }
 }
 

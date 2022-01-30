@@ -13,7 +13,7 @@ const categories = {
             .then(document => {
                 // If document is found, return
                 if (document) {
-                    return { "Error": `Category \'${category}\' already exists` }
+                    return { error: `Category \'${category}\' already exists` }
                 }
                 // Else create category
                 return Category.create({ name: category, phrases: [] })
@@ -21,7 +21,7 @@ const categories = {
             .then(result => {
                 // If the result has _id property, that means a new category was created, so return success message
                 if(result._id){
-                    return {"message": `Category \'${category}\' created`}
+                    return {message: `Category \'${category}\' created`}
                 }
                 // Otherwise the result would be the error object message from the previous then()
                 return result
@@ -60,13 +60,13 @@ const categories = {
                 if (document) {
                     // Check that phrase does not already exist
                     if(document.phrases.includes(phrase)){
-                        return { "Error": `Phrase \'${phrase}\' already exists` }
+                        return { error: `Phrase \'${phrase}\' already exists` }
                     }
                     document.phrases.push(phrase)
                     return document.save()
                 }
                 // Else return not found
-                return { "Error": `Category \'${category}\' not found` }
+                return { error: `Category \'${category}\' not found` }
 
             })
             .then(result => {
@@ -89,7 +89,7 @@ const categories = {
                     return document.save()
                 }
                 // Else return not found
-                return { "Error": `Category ${category} not found` }
+                return { error: `Category ${category} not found` }
             })
             .then(result => {
                 // If document was found, document.save() returns the document
@@ -107,10 +107,10 @@ const categories = {
         .then(result => {
             // If a category is actually deleted
             if(result.deletedCount > 0){
-                return {"message": `Category \'${category}\' deleted`}
+                return {message: `Category \'${category}\' deleted`}
             }
             // If no category was found
-            return {"Error": `Category \'${category}\' not found`}
+            return {error: `Category \'${category}\' not found`}
         })
         .catch(error => error)
     },
