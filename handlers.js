@@ -279,7 +279,6 @@ const handlers = {
                         }
                     })
                     .catch(error => {
-                        console.log(error);
                         // If token is not found
                         reject({
                             statusCode: 401,
@@ -389,7 +388,7 @@ const handlers = {
 
                 categories.createCategory(category)
                     .then(result => {
-                        // If createCategory returns an Error message (meaning a category already exists), return a 400 status code
+                        // If createCategory returns an error message (meaning a category already exists), return a 400 status code
                         if (result[error]) {
                             resolve({
                                 statusCode: 400,
@@ -415,7 +414,7 @@ const handlers = {
 
                 categories.removeCategory(category)
                     .then(result => {
-                        // If removeCategory returns an Error message (meaning a category does not exists), return a 400 status code
+                        // If removeCategory returns an error message (meaning a category does not exists), return a 400 status code
                         if (result[error]) {
                             resolve({
                                 statusCode: 400,
