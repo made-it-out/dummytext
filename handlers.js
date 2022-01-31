@@ -327,7 +327,7 @@ const handlers = {
                         .catch(error => {
                             reject({
                                 statusCode: 404,
-                                payload: { error: "Could not find category" }
+                                payload: { message: "Could not find category" }
                             })
                         })
                 }
@@ -342,7 +342,7 @@ const handlers = {
                         .catch(error => {
                             reject({
                                 statusCode: 404,
-                                payload: { error: "Could not find category" }
+                                payload: { message: "Could not find category" }
                             })
                         })
                 }

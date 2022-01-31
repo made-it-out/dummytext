@@ -59,13 +59,13 @@ const categories = {
                 if (document) {
                     // Check that phrase does not already exist
                     if (document.phrases.includes(phrase)) {
-                        return { error: `Phrase \'${phrase}\' already exists` }
+                        return { message: `Phrase \'${phrase}\' already exists` }
                     }
                     document.phrases.push(phrase)
                     return document.save()
                 }
                 // Else return not found
-                return { error: `Category \'${category}\' not found` }
+                return { message: `Category \'${category}\' not found` }
 
             })
             .then(result => {
@@ -84,18 +84,24 @@ const categories = {
             .then(document => {
                 // If document is found, remove phrase and save
                 if (document) {
-                    document.phrases = document.phrases.filter(p => p !== phrase)
-                    return document.save()
+                    // Check that the phrase exists
+                    if (document.phrases.includes(phrase)) {
+                        document.phrases = document.phrases.filter(p => p !== phrase)
+                        return document.save()
+                    }
+                    else{
+                        return {message: `Phrase \'${phrase}\' does not exist`}
+                    }
                 }
                 // Else return not found
-                return { error: `Category ${category} not found` }
+                return { message: `Category ${category} not found` }
             })
             .then(result => {
                 // If document was found, document.save() returns the document
                 if (result.phrases) {
                     return { category, phrases: result.phrases }
                 }
-                // If document was not found, return not found from previous .then()
+                // If document was not found, return message from previous .then()
                 return result
             })
             .catch(error => error)

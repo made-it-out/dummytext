@@ -87,7 +87,16 @@ function init() {
 
             fetch(resource, request)
                 .then(response => response.json())
-                .then(data => outputPhrases(data.phrases))
+                .then(data => {
+                    // If phrases get updated
+                    if(data.phrases){
+                        outputPhrases(data.phrases)
+                    }
+                    // Else if trying to add a phrase that already exists, or delete one that does not exist
+                    else{
+                        output.innerHTML = data.message
+                    }
+                })
                 .catch(error => console.error(error))
         },
         delete(event, form) {
