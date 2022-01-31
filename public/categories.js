@@ -44,7 +44,7 @@ function init() {
                     output.innerHTML = data.message
                     getCategories()
                 })
-                .catch(error => console.log(error))
+                .catch(error => console.error(error))
         },
         read(event, form) {
             event.preventDefault()
@@ -55,7 +55,7 @@ function init() {
             fetch(resource)
                 .then(response => response.json())
                 .then(data => outputPhrases(data))
-                .catch(error => console.log(error))
+                .catch(error => console.error(error))
         },
         update(event, form) {
             event.preventDefault();
@@ -88,7 +88,7 @@ function init() {
             fetch(resource, request)
                 .then(response => response.json())
                 .then(data => outputPhrases(data.phrases))
-                .catch(error => console.log(error))
+                .catch(error => console.error(error))
         },
         delete(event, form) {
             event.preventDefault();
@@ -109,7 +109,7 @@ function init() {
                     output.innerHTML = data.message
                     getCategories()
                 })
-                .catch(error => console.log(error))
+                .catch(error => console.error(error))
         }
     }
 
@@ -152,7 +152,7 @@ function init() {
                     })
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
     }
 
     // Create a <p> element for each phrase and append it to output element

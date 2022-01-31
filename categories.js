@@ -7,50 +7,49 @@ const trailingCommaChance = 0.15
 const Category = require('./models/category');
 
 const categories = {
-    // Create a new category
     createCategory(category) {
-        return Category.findOne({ name: category })
-            .then(document => {
-                // If document is found, return
-                if (document) {
-                    return { error: `Category \'${category}\' already exists` }
-                }
-                // Else create category
-                return Category.create({ name: category, phrases: [] })
-            })
-            .then(result => {
-                // If the result has _id property, that means a new category was created, so return success message
-                if(result._id){
-                    return {message: `Category \'${category}\' created`}
-                }
-                // Otherwise the result would be the error object message from the previous then()
-                return result
-            })
-            .catch(error => error)
+        return new Promise((resolve, reject) => {
+            Category.findOne({ name: category })
+                .then(document => {
+                    if (document) {
+                        return reject({ message: `Category \'${category}\' already exists` })
+                    }
+                    else {
+                        // Else create category
+                        return Category.create({ name: category, phrases: [] })
+                    }
+                })
+                .then(document => {
+                    // Resolve with success message
+                    resolve({ message: `Category \'${category}\' created` })
+                })
+                .catch(error => reject({ message: error }))
+        })
+
     },
     // Get all categories
-    getCategories(){
+    getCategories() {
         return Category.find({})
-        .then(categories => categories.map(category => category.name))
-        .catch(error => error)
+            .then(categories => categories.map(category => category.name))
+            .catch(error => error)
     },
     // Read the phrases of a category
     readPhrases(category) {
         // If given category is mixed, choose a new category every time readPhrases is called (every sentence)
-        if(category === 'mixed'){
+        if (category === 'mixed') {
             return Category.find({})
-            .then(categories => {
-                const randomNumber = Math.floor(Math.random() * categories.length)
-                return categories[randomNumber].phrases
-            })
-            .catch(error => error)
+                .then(categories => {
+                    const randomNumber = Math.floor(Math.random() * categories.length)
+                    return categories[randomNumber].phrases
+                })
+                .catch(error => error)
         }
-        else{
+        else {
             return Category.findOne({ name: category })
-            .then(category => category.phrases)
-            .catch(error => error)
+                .then(category => category.phrases)
+                .catch(error => error)
         }
-        
+
     },
     // Add a phrase to a category
     addPhrase(category, phrase) {
@@ -59,7 +58,7 @@ const categories = {
                 // If document is found, add phrase and save
                 if (document) {
                     // Check that phrase does not already exist
-                    if(document.phrases.includes(phrase)){
+                    if (document.phrases.includes(phrase)) {
                         return { error: `Phrase \'${phrase}\' already exists` }
                     }
                     document.phrases.push(phrase)
@@ -71,7 +70,7 @@ const categories = {
             })
             .then(result => {
                 // If document was found, document.save() returns the document
-                if(result.phrases){
+                if (result.phrases) {
                     return { category, phrases: result.phrases }
                 }
                 // If document was not found, return not found from previous .then()
@@ -93,7 +92,7 @@ const categories = {
             })
             .then(result => {
                 // If document was found, document.save() returns the document
-                if(result.phrases){
+                if (result.phrases) {
                     return { category, phrases: result.phrases }
                 }
                 // If document was not found, return not found from previous .then()
@@ -103,16 +102,18 @@ const categories = {
     },
     // Delete category
     removeCategory(category) {
-        return Category.deleteOne({name: category})
-        .then(result => {
-            // If a category is actually deleted
-            if(result.deletedCount > 0){
-                return {message: `Category \'${category}\' deleted`}
-            }
-            // If no category was found
-            return {error: `Category \'${category}\' not found`}
+        return new Promise((resolve,reject) => {
+            Category.deleteOne({ name: category })
+            .then(result => {
+                // If a category is actually deleted
+                if (result.deletedCount > 0) {
+                    return resolve({ message: `Category \'${category}\' deleted` })
+                }
+                // If no category was found
+                return reject({ message: `Category \'${category}\' not found` })
+            })
+            .catch(error => reject({ message: error }))
         })
-        .catch(error => error)
     },
     // Filter phrases to create a sentence
     filterPhrases(phrases, numberOfPhrases, sentence) {

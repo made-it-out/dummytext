@@ -387,23 +387,12 @@ const handlers = {
                 const category = data.payload.category
 
                 categories.createCategory(category)
-                    .then(result => {
-                        // If createCategory returns an error message (meaning a category already exists), return a 400 status code
-                        if (result[error]) {
-                            resolve({
-                                statusCode: 400,
-                                payload: result
-                            })
-                        }
-                        else {
-                            resolve({
-                                statusCode: 201,
-                                payload: result
-                            })
-                        }
-                    })
+                    .then(result => resolve({
+                        statusCode: 201,
+                        payload: result
+                    }))
                     .catch(error => reject({
-                        statusCode: 500,
+                        statusCode: 400,
                         payload: error
                     }))
             })
@@ -413,23 +402,12 @@ const handlers = {
                 const category = data.payload.category
 
                 categories.removeCategory(category)
-                    .then(result => {
-                        // If removeCategory returns an error message (meaning a category does not exists), return a 400 status code
-                        if (result[error]) {
-                            resolve({
-                                statusCode: 400,
-                                payload: result
-                            })
-                        }
-                        else {
-                            resolve({
-                                statusCode: 200,
-                                payload: result
-                            })
-                        }
-                    })
+                    .then(result => resolve({
+                        statusCode: 200,
+                        payload: result
+                    }))
                     .catch(error => reject({
-                        statusCode: 500,
+                        statusCode: 404,
                         payload: error
                     }))
             })
