@@ -30,7 +30,7 @@ function init() {
         const email = feedbackForm.querySelector("#email").value;
         const message = feedbackForm.querySelector("#message").value;
 
-        const resource = "https://formsubmit.co/ajax/dummytextgenerator@gmail.com"
+        const resource = "https://formsubmit.co/ajax/5ac06c118e35243fc18cc354864d3100"
         const request = {
             method: "POST",
             headers: {
