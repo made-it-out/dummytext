@@ -3,18 +3,50 @@
     flex-direction: column;
     gap: 1rem;
 
-    &--hidden{
+    &--hidden {
         display: none;
     }
+
     &__field {
         display: flex;
+        flex-direction: column;
         flex-wrap: wrap;
-        align-items: center;
         gap: 1rem;
     }
 
-    select, option, input{
-        padding: .5rem;
+    select,
+    option,
+    input,
+    textarea {
+        padding: 1rem .5rem;
         font-size: var(--font-4);
+        margin-bottom: 1rem;
+    }
+
+    textarea {
+        height: 200px;
+    }
+}
+
+#generate-text {
+    .row {
+        align-items: flex-end;
+    }
+
+    button {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+}
+
+#feedback {
+    h2 {
+        font-size: var(--font-8);
+        font-weight: 700;
+    }
+
+    button{
+        width: 100%;
+        margin-top: 1rem;
     }
 }

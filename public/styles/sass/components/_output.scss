@@ -1,15 +1,12 @@
 @use '../abstracts/'as a;
 
-.output:not(:empty) {
-    padding: 1rem;
+.output{
     background-color: var(--color-white);
+    min-height: 250px;
     border-radius: 5px;
     margin-top: 2rem;
+    padding: 1rem;
     line-height: 1.5;
-
-    @include a.mq-min(768px) {
-        margin-top: 4rem;
-    }
 
     p {
         margin-bottom: 1rem;
