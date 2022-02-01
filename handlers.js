@@ -5,13 +5,13 @@ const helpers = require("./helpers")
 const config = require("./config")
 const pagesDir = './pages'
 
-// Handlers expect a data object and returns a promise with a status code and a json payload
+// Handlers expect a data object and returns a promise with a status code and a payload to be converted to JSON
 const handlers = {
     index(data) {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
-                fs.readFile(`${pagesDir}/index.html`, "utf-8")
+                fs.readFile(`${pagesDir}/index.html`)
                     .then(content => resolve({
                         statusCode: 200,
                         contentType: "text/html",
@@ -19,13 +19,13 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 500,
-                        payload: { error: "Server error" }
+                        payload: { message: "Server error" }
                     }))
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { error: "Request method not allowed" }
+                    payload: { message: "Request method not allowed" }
                 })
             }
         })
@@ -34,7 +34,7 @@ const handlers = {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
-                fs.readFile(`${pagesDir}/login.html`, "utf-8")
+                fs.readFile(`${pagesDir}/login.html`)
                     .then(content => resolve({
                         statusCode: 200,
                         contentType: "text/html",
@@ -42,13 +42,13 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 500,
-                        payload: { error: "Server error" }
+                        payload: { message: "Server error" }
                     }))
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { error: "Request method not allowed" }
+                    payload: { message: "Request method not allowed" }
                 })
             }
         })
@@ -62,7 +62,7 @@ const handlers = {
 
                 return handlers._tokens.verifyToken(tokenId)
                     // If token is verified
-                    .then(result => fs.readFile(`${pagesDir}/categories.html`, "utf-8")
+                    .then(result => fs.readFile(`${pagesDir}/categories.html`)
                         .then(content => resolve({
                             statusCode: 200,
                             contentType: "text/html",
@@ -71,7 +71,7 @@ const handlers = {
                         // Nested catch if error reading file
                         .catch(error => reject({
                             statusCode: 500,
-                            payload: { error: "Server error" }
+                            payload: { message: "Server error" }
                         })))
                     // If token cannot be verified, serve the login page
                     .catch(error => {
@@ -81,7 +81,7 @@ const handlers = {
             else {
                 reject({
                     statusCode: 405,
-                    payload: { error: "Request method not allowed" }
+                    payload: { message: "Request method not allowed" }
                 })
             }
         })
@@ -90,7 +90,7 @@ const handlers = {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
-                fs.readFile(`${pagesDir}/docs.html`, "utf-8")
+                fs.readFile(`${pagesDir}/docs.html`)
                     .then(content => resolve({
                         statusCode: 200,
                         contentType: "text/html",
@@ -98,13 +98,13 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 500,
-                        payload: { error: "Server error" }
+                        payload: { message: "Server error" }
                     }))
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { error: "Request method not allowed" }
+                    payload: { message: "Request method not allowed" }
                 })
             }
         })
@@ -113,7 +113,7 @@ const handlers = {
         return new Promise((resolve, reject) => {
             reject({
                 statusCode: 404,
-                payload: { error: "Page Not Found" }
+                payload: { message: "Page Not Found" }
             })
         })
     },
@@ -134,14 +134,14 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 404,
-                        payload: { error: "Category not found" }
+                        payload: { message: "Category not found" }
                     })
                     )
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { error: "Request method not allowed" }
+                    payload: { message: "Request method not allowed" }
                 })
             }
         })
@@ -151,13 +151,11 @@ const handlers = {
         return new Promise((resolve, reject) => {
             // Only accept GET request
             if (data.method === 'get') {
-                // Get the filename being requested
-                // const trimmedAssetName = data.trimmedPath.replace('public', '');
                 const publicDir = "./public"
                 let contentType = 'text/plain'
 
                 if (data.trimmedPath.length > 0) {
-                    fs.readFile(`${publicDir}/${data.trimmedPath}`, "utf-8")
+                    fs.readFile(`${publicDir}/${data.trimmedPath}`)
                         .then(content => {
                             if (data.trimmedPath.endsWith('.css')) {
                                 contentType = 'text/css'
@@ -183,20 +181,20 @@ const handlers = {
                         })
                         .catch(error => reject({
                             statusCode: 404,
-                            payload: { error: "Not Found" }
+                            payload: { message: "Not Found" }
                         }))
                 }
                 else {
                     reject({
                         statusCode: 404,
-                        payload: { error: "Not Found" }
+                        payload: { message: "Not Found" }
                     })
                 }
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { error: "Request method not allowed" }
+                    payload: { message: "Request method not allowed" }
                 })
             }
         })
@@ -210,7 +208,7 @@ const handlers = {
         else {
             return new Promise((resolve, reject) => reject({
                 statusCode: 405,
-                payload: { error: "Request method not allowed" }
+                payload: { message: "Request method not allowed" }
             }))
         }
     },
@@ -224,7 +222,7 @@ const handlers = {
                     // Username should not be filled out
                     reject({
                         statusCode: 401,
-                        payload: { error: "Invalid username or password" }
+                        payload: { message: "Invalid username or password" }
                     })
                     return
                 }
@@ -250,14 +248,14 @@ const handlers = {
                         }))
                         .catch(error => reject({
                             statusCode: 500,
-                            payload: { error: "Could not create token" }
+                            payload: { message: "Could not create token" }
                         }))
                 }
                 else {
                     // If password does not match
                     reject({
                         statusCode: 401,
-                        payload: { error: "Invalid username or password" }
+                        payload: { message: "Invalid username or password" }
                     })
                 }
             })
@@ -274,7 +272,7 @@ const handlers = {
                         else {
                             reject({
                                 statusCode: 401,
-                                payload: { error: "Unauthorized" }
+                                payload: { message: "Unauthorized" }
                             })
                         }
                     })
@@ -282,7 +280,7 @@ const handlers = {
                         // If token is not found
                         reject({
                             statusCode: 401,
-                            payload: { error: "Unauthorized" }
+                            payload: { message: "Unauthorized" }
                         })
                     })
             })
@@ -304,7 +302,7 @@ const handlers = {
         else {
             return new Promise((resolve, reject) => reject({
                 statusCode: 405,
-                payload: { error: "Request method not allowed" }
+                payload: { message: "Request method not allowed" }
             }))
         }
     },
@@ -350,7 +348,7 @@ const handlers = {
                     // If no method is given
                     reject({
                         statusCode: 400,
-                        payload: { error: "Must include method of \'add\' or \'delete\' in request body" }
+                        payload: { message: "Must include method of \'add\' or \'delete\' in request body" }
                     })
                 }
             })
@@ -372,7 +370,7 @@ const handlers = {
                         else {
                             reject({
                                 statusCode: 404,
-                                payload: { error: `Category \'${category}\' not found` }
+                                payload: { message: `Category \'${category}\' not found` }
                             })
                         }
                     })
@@ -425,13 +423,13 @@ const handlers = {
                     }))
                     .catch(error => reject({
                         statusCode: 500,
-                        payload: { error: "Server error finding categories" }
+                        payload: { message: "Server error finding categories" }
                     }))
             }
             else {
                 reject({
                     statusCode: 405,
-                    payload: { error: "Request method not allowed" }
+                    payload: { message: "Request method not allowed" }
                 })
             }
         })

@@ -1,4 +1,4 @@
-const fs = require("fs/promises");
+// CRUD functions for categories and creating paragraphs
 const minPhrases = 4
 const maxPhrases = 6
 const minSentences = 4
