@@ -1,23 +1,9 @@
 const http = require("http");
 const { StringDecoder } = require("string_decoder")
 const mongoose = require('mongoose')
-const handlers = require("./handlers")
 const config = require("./config")
 const helpers = require("./helpers")
-
-// TODO move router to a different file
-const router = {
-    api: handlers.api,
-    public: handlers.public,
-    '': handlers.index,
-    login: handlers.login,
-    categories: handlers.categories,
-    docs: handlers.docs,
-    test: handlers.test,
-    'api/tokens': handlers['api/tokens'],
-    'api/categories': handlers['api/categories'],
-    'api/categories/all': handlers['api/categories/all']
-}
+const router = require("./router")
 
 const server = http.createServer((req, res) => {
     // Get the requested url
@@ -58,7 +44,7 @@ const server = http.createServer((req, res) => {
         }
 
         // Check for static asset first
-        handlers.public(data)
+        router.public(data)
             .then(response => {
                 const responsePayload = response.payload
                 // If content type is specified, use it. Otherwise default to json
@@ -82,7 +68,7 @@ const server = http.createServer((req, res) => {
             })
             // If the asset is not found, check for other handlers on the router, if the given path is not on the router, use the notFound handler
             .catch(errorResponse => {
-                let chosenHandler = typeof (router[trimmedPath]) === 'function' ? router[trimmedPath] : handlers.notFound
+                let chosenHandler = typeof (router[trimmedPath]) === 'function' ? router[trimmedPath] : router.notFound
 
                 chosenHandler(data)
                     .then(response => {

@@ -574,6 +574,7 @@ Text Field
   background-color: var(--color-white);
   border-radius: 5px;
   margin-top: 2rem;
+  line-height: 1.5;
 }
 @media only screen and (min-width: 768px) {
   .output:not(:empty) {

@@ -5,6 +5,7 @@
     background-color: var(--color-white);
     border-radius: 5px;
     margin-top: 2rem;
+    line-height: 1.5;
 
     @include a.mq-min(768px) {
         margin-top: 4rem;
